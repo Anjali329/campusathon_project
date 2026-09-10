@@ -44,6 +44,46 @@ export const api = {
     return res.json();
   },
 
+  // Faculty Specific APIs
+  getFacultySchedule: async () => {
+    const res = await fetch(`${API_BASE_URL}/faculty/schedule`, {
+      headers: getHeaders(),
+    });
+    return res.json();
+  },
+
+  getFacultyDefaulters: async () => {
+    const res = await fetch(`${API_BASE_URL}/faculty/defaulters`, {
+      headers: getHeaders(),
+    });
+    return res.json();
+  },
+
+  getFacultyEvaluations: async () => {
+    const res = await fetch(`${API_BASE_URL}/faculty/evaluations`, {
+      headers: getHeaders(),
+    });
+    return res.json();
+  },
+
+  gradeSubmission: async (gradeData) => {
+    const res = await fetch(`${API_BASE_URL}/faculty/grade`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(gradeData),
+    });
+    return res.json();
+  },
+
+  issueWarningNotice: async (warningData) => {
+    const res = await fetch(`${API_BASE_URL}/faculty/issue-warning`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(warningData),
+    });
+    return res.json();
+  },
+
   // Priority Actions
   getPriorityActions: async () => {
     const res = await fetch(`${API_BASE_URL}/priority/actions`, {

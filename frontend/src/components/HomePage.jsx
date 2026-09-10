@@ -16,9 +16,18 @@ import {
   Sparkles
 } from 'lucide-react';
 import { currentUser } from '../data/mockData';
+import FacultyDashboard from './FacultyDashboard';
 
-export default function HomePage({ setActiveTab, onOpenCorrectionModal }) {
+export default function HomePage({ activeRole, setActiveTab, onOpenCorrectionModal }) {
   const [searchQuery, setSearchQuery] = useState('');
+
+  if (activeRole === 'faculty') {
+    return (
+      <FacultyDashboard 
+        setActiveTab={setActiveTab}
+      />
+    );
+  }
 
   const modules = [
     {
@@ -124,7 +133,7 @@ export default function HomePage({ setActiveTab, onOpenCorrectionModal }) {
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       
-      {/* Top Student Header Bar (EduPlus / ERP Style) */}
+      {/* Top Student Header Bar */}
       <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
         
         {/* Left Profile Info */}
@@ -179,7 +188,7 @@ export default function HomePage({ setActiveTab, onOpenCorrectionModal }) {
       {/* Main Grid & Side Widget Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         
-        {/* Modules Grid (Rectangular cards matching reference screenshot) */}
+        {/* Modules Grid */}
         <div className="lg:col-span-3 grid grid-cols-2 sm:grid-cols-3 gap-4">
           {filteredModules.map((mod) => {
             const Icon = mod.icon;
@@ -215,7 +224,7 @@ export default function HomePage({ setActiveTab, onOpenCorrectionModal }) {
           })}
         </div>
 
-        {/* Right Side Institution Vision / Organization Widget */}
+        {/* Right Side Institution Vision Widget */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 space-y-4">
           
           <div className="flex items-center space-x-2 text-blue-900 font-bold text-xs pb-2 border-b border-slate-100">

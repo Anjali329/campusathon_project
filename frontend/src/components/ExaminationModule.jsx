@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   BookOpen, 
   Calendar, 
@@ -9,9 +9,10 @@ import {
   Download, 
   Plus, 
   CheckCircle2,
-  Check
+  X
 } from 'lucide-react';
 import { upcomingExams, currentUser } from '../data/mockData';
+import { api } from '../services/api';
 
 export default function ExaminationModule({ activeRole }) {
   const [activeSubTab, setActiveSubTab] = useState('timetable'); // 'timetable' or 'gradecards'
@@ -58,27 +59,44 @@ export default function ExaminationModule({ activeRole }) {
   ]);
 
   const [showAddExamModal, setShowAddExamModal] = useState(false);
-  const [newSubject, setNewSubject] = useState('CS603: Algorithms');
+  const [newSubject, setNewSubject] = useState('CS603: Design & Analysis of Algorithms');
+  const [newType, setNewType] = useState('Mid-Term Written Exam');
   const [newDate, setNewDate] = useState('2026-09-22');
+  const [newTime, setNewTime] = useState('10:00 AM - 12:00 PM');
   const [newVenue, setNewVenue] = useState('Lecture Hall LT-1');
   const [newSeat, setNewSeat] = useState('LT1-A-15');
+
+  const [toastMessage, setToastMessage] = useState(null);
+
+  useEffect(() => {
+    api.getExamsTimetable().then(res => {
+      if (res.success && res.timetable) {
+        setExamTimetable(res.timetable);
+      }
+    }).catch(() => {});
+  }, []);
 
   const handleAddExam = (e) => {
     e.preventDefault();
     const newEntry = {
       id: `ex-${Date.now()}`,
-      code: newSubject.split(':')[0],
-      subject: newSubject.split(':')[1] || newSubject,
-      type: "Faculty Scheduled Exam",
+      code: newSubject.split(':')[0].trim(),
+      subject: (newSubject.split(':')[1] || newSubject).trim(),
+      type: newType,
       date: newDate,
-      time: "10:00 AM - 12:00 PM",
+      time: newTime,
       venue: newVenue,
       seatNo: newSeat,
       updatedBy: "Prof. Ananya Sen (Faculty)",
       updatedOn: "Just Now",
     };
+
+    api.publishExamSlot(newEntry).catch(() => {});
+
     setExamTimetable(prev => [newEntry, ...prev]);
     setShowAddExamModal(false);
+    setToastMessage(`Exam timetable slot for '${newEntry.subject}' published successfully!`);
+    setTimeout(() => setToastMessage(null), 4000);
   };
 
   // Mock grade card datasets for semesters
@@ -123,6 +141,17 @@ export default function ExaminationModule({ activeRole }) {
   return (
     <div className="space-y-5 max-w-7xl mx-auto">
       
+      {/* Toast Notification Banner */}
+      {toastMessage && (
+        <div className="bg-emerald-600 text-white p-3.5 rounded-xl text-xs font-semibold shadow-md flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-200" />
+            <span>{toastMessage}</span>
+          </div>
+          <button onClick={() => setToastMessage(null)} className="text-emerald-200 hover:text-white">✕</button>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
@@ -167,10 +196,10 @@ export default function ExaminationModule({ activeRole }) {
             {activeRole === 'faculty' && (
               <button 
                 onClick={() => setShowAddExamModal(true)}
-                className="flex items-center space-x-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition"
+                className="flex items-center space-x-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-xs"
               >
                 <Plus className="w-4 h-4" />
-                <span>Publish Exam Timetable Slot</span>
+                <span>Upload / Edit Exam Timetable</span>
               </button>
             )}
           </div>
@@ -207,7 +236,7 @@ export default function ExaminationModule({ activeRole }) {
                 </div>
 
                 <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
-                  <span>Updated by: <strong className="text-slate-600">{ex.updatedBy.split(' ')[0]} {ex.updatedBy.split(' ')[1]}</strong></span>
+                  <span>Updated by: <strong className="text-slate-600">{ex.updatedBy}</strong></span>
                   <span>{ex.updatedOn}</span>
                 </div>
               </div>
@@ -301,64 +330,100 @@ export default function ExaminationModule({ activeRole }) {
       {/* Add Exam Modal for Faculty */}
       {showAddExamModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl border border-slate-200 space-y-4">
-            <h3 className="font-bold text-base text-slate-900">Publish Exam Timetable Entry</h3>
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4 animate-fadeIn">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="font-bold text-base text-slate-900 flex items-center space-x-2">
+                <Calendar className="w-5 h-5 text-purple-600" />
+                <span>Publish Exam Timetable Entry</span>
+              </h3>
+              <button onClick={() => setShowAddExamModal(false)} className="text-slate-400 hover:text-slate-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-            <form onSubmit={handleAddExam} className="space-y-3 text-xs">
+            <form onSubmit={handleAddExam} className="space-y-3.5 text-xs">
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Subject</label>
+                <label className="block font-bold text-slate-700 mb-1">Subject & Course Code</label>
                 <select 
                   value={newSubject} 
                   onChange={(e) => setNewSubject(e.target.value)}
-                  className="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-800"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none"
                 >
-                  <option>CS603: Algorithms</option>
                   <option>CS601: Operating Systems</option>
                   <option>CS604: Machine Learning</option>
+                  <option>CS602: Computer Networks</option>
+                  <option>CS603: Design & Analysis of Algorithms</option>
                 </select>
               </div>
 
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Exam Date</label>
-                <input 
-                  type="date" 
-                  value={newDate} 
-                  onChange={(e) => setNewDate(e.target.value)}
-                  className="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-800"
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Exam Type</label>
+                  <select 
+                    value={newType} 
+                    onChange={(e) => setNewType(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                  >
+                    <option>Mid-Term Written Exam</option>
+                    <option>End-Term Examination</option>
+                    <option>Practical Lab Exam</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Exam Date</label>
+                  <input 
+                    type="date" 
+                    value={newDate} 
+                    onChange={(e) => setNewDate(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                  />
+                </div>
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Venue</label>
+                <label className="block font-bold text-slate-700 mb-1">Time Slot</label>
                 <input 
                   type="text" 
-                  value={newVenue} 
-                  onChange={(e) => setNewVenue(e.target.value)}
-                  className="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-800"
+                  value={newTime} 
+                  onChange={(e) => setNewTime(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none"
                 />
               </div>
 
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Assigned Seat Number Range</label>
-                <input 
-                  type="text" 
-                  value={newSeat} 
-                  onChange={(e) => setNewSeat(e.target.value)}
-                  className="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-800"
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Venue</label>
+                  <input 
+                    type="text" 
+                    value={newVenue} 
+                    onChange={(e) => setNewVenue(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1">Assigned Seat Range</label>
+                  <input 
+                    type="text" 
+                    value={newSeat} 
+                    onChange={(e) => setNewSeat(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                  />
+                </div>
               </div>
 
               <div className="pt-2 flex justify-end space-x-2">
                 <button 
                   type="button" 
                   onClick={() => setShowAddExamModal(false)}
-                  className="px-3 py-1.5 font-semibold text-slate-600"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit"
-                  className="px-4 py-1.5 bg-emerald-600 text-white font-semibold rounded-lg"
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-xs"
                 >
                   Publish Schedule
                 </button>
@@ -371,4 +436,3 @@ export default function ExaminationModule({ activeRole }) {
     </div>
   );
 }
-

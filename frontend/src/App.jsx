@@ -35,6 +35,9 @@ export default function App() {
   const handleLoginSuccess = (userProfile) => {
     setUser(userProfile);
     setIsAuthenticated(true);
+    if (userProfile.role) {
+      setActiveRole(userProfile.role);
+    }
     setActiveTab('home');
   };
 
@@ -105,6 +108,7 @@ export default function App() {
         <main className="w-full">
           {activeTab === 'home' && (
             <HomePage 
+              activeRole={activeRole}
               setActiveTab={setActiveTab} 
               onOpenCorrectionModal={() => setIsCorrectionOpen(true)}
             />
