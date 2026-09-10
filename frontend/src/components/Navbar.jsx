@@ -10,13 +10,15 @@ import {
   AlertTriangle,
   CheckCircle2,
   X,
-  Home
+  Home,
+  LogOut
 } from 'lucide-react';
 import { currentUser, facultyUser, adminUser } from '../data/mockData';
 
-export default function Navbar({ activeRole, setActiveRole, activeTab, setActiveTab }) {
+export default function Navbar({ activeRole, setActiveRole, activeTab, setActiveTab, user, onLogout }) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const notifications = [
     { id: 1, title: "Attendance Warning", text: "CS601 OS Attendance dropped to 68.5%", time: "10m ago", type: "warning" },
@@ -25,6 +27,7 @@ export default function Navbar({ activeRole, setActiveRole, activeTab, setActive
   ];
 
   const getRoleUser = () => {
+    if (user) return user;
     if (activeRole === 'faculty') return facultyUser;
     if (activeRole === 'admin') return adminUser;
     return currentUser;
@@ -161,14 +164,37 @@ export default function Navbar({ activeRole, setActiveRole, activeTab, setActive
               )}
             </div>
 
-            {/* Profile Avatar */}
-            <div className="flex items-center space-x-2 pl-2 border-l border-slate-800">
-              <img 
-                src={currentProfile.avatar} 
-                alt={currentProfile.name}
-                className="w-7 h-7 rounded-full object-cover ring-1 ring-blue-400" 
-              />
-              <span className="hidden sm:inline text-xs font-semibold text-slate-200">{currentProfile.name.split(' ')[0]}</span>
+            {/* Profile Avatar & Logout Menu */}
+            <div className="relative">
+              <button 
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className="flex items-center space-x-2 pl-2 border-l border-slate-800 focus:outline-none"
+              >
+                <img 
+                  src={currentProfile.avatar} 
+                  alt={currentProfile.name}
+                  className="w-7 h-7 rounded-full object-cover ring-1 ring-blue-400" 
+                />
+                <span className="hidden sm:inline text-xs font-semibold text-slate-200">{currentProfile.name.split(' ')[0]}</span>
+                <ChevronDown className="w-3 h-3 text-slate-400 hidden sm:inline" />
+              </button>
+
+              {showProfileMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-slate-800 border border-slate-700 rounded-xl shadow-xl py-1.5 z-50">
+                  <div className="px-3 py-2 border-b border-slate-700">
+                    <p className="text-xs font-bold text-white">{currentProfile.name}</p>
+                    <p className="text-[10px] text-slate-400 truncate">{currentProfile.email}</p>
+                  </div>
+                  
+                  <button 
+                    onClick={() => { setShowProfileMenu(false); onLogout && onLogout(); }}
+                    className="w-full text-left px-3 py-2 text-xs flex items-center space-x-2 text-red-400 hover:bg-slate-700/60 transition font-semibold"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Log Out</span>
+                  </button>
+                </div>
+              )}
             </div>
 
           </div>

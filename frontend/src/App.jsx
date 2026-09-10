@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import HomePage from './components/HomePage';
+import AuthPage from './components/AuthPage';
 import SmartPriorityEngine from './components/SmartPriorityEngine';
 import AttendanceModule from './components/AttendanceModule';
 import TimelineModule from './components/TimelineModule';
@@ -19,7 +20,9 @@ import ExportModal from './components/modals/ExportModal';
 import { ArrowLeft } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('home'); // Default landing page is Home Grid!
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
+  const [activeTab, setActiveTab] = useState('home');
   const [activeRole, setActiveRole] = useState('student'); // 'student', 'faculty', 'admin'
 
   // Modals state
@@ -28,6 +31,27 @@ export default function App() {
   const [selectedNotice, setSelectedNotice] = useState(null);
   const [isPublishNoticeOpen, setIsPublishNoticeOpen] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
+
+  const handleLoginSuccess = (userProfile) => {
+    setUser(userProfile);
+    setIsAuthenticated(true);
+    setActiveTab('home');
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setUser(null);
+    localStorage.removeItem('campusflow_token');
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <AuthPage 
+        onLoginSuccess={handleLoginSuccess}
+        setActiveRole={setActiveRole}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50/70 text-slate-800 flex flex-col font-sans">
@@ -38,6 +62,8 @@ export default function App() {
         setActiveRole={setActiveRole} 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
+        user={user}
+        onLogout={handleLogout}
       />
 
       {/* Main Body Container */}
