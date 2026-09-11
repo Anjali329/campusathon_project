@@ -55,6 +55,85 @@ const facultyClassesData = {
   ]
 };
 
+// Database Store: Historical Student Submissions uploaded by each student
+let allStudentSubmissionsArchive = [
+  {
+    id: "sub-archive-1",
+    studentId: "STU-1042",
+    studentName: "Rahul Sharma",
+    studentRoll: "21BCE1042",
+    subject: "CS604 Machine Learning",
+    assignmentTitle: "Machine Learning Lab Report 4",
+    submittedFile: "Rahul_Sharma_ML_Lab4.pdf",
+    submittedAt: "10 Sep 2026, 06:15 PM",
+    maxMarks: 50,
+    score: "48 / 50",
+    grade: "A+",
+    feedback: "Excellent code implementation of Decision Trees.",
+    status: "Verified & Graded",
+  },
+  {
+    id: "sub-archive-2",
+    studentId: "STU-1042",
+    studentName: "Rahul Sharma",
+    studentRoll: "21BCE1042",
+    subject: "CS602 Computer Networks",
+    assignmentTitle: "Network Socket Programming Project",
+    submittedFile: "Rahul_Socket_Program.zip",
+    submittedAt: "04 Sep 2026, 09:30 PM",
+    maxMarks: 50,
+    score: "46 / 50",
+    grade: "A+",
+    feedback: "Robust TCP/UDP socket implementation.",
+    status: "Verified & Graded",
+  },
+  {
+    id: "sub-archive-3",
+    studentId: "STU-1088",
+    studentName: "Anish Kapoor",
+    studentRoll: "21BCE1088",
+    subject: "CS601 Operating Systems",
+    assignmentTitle: "OS Page Replacement Simulator",
+    submittedFile: "Anish_OS_Simulator.zip",
+    submittedAt: "09 Sep 2026, 09:30 PM",
+    maxMarks: 100,
+    score: "88 / 100",
+    grade: "A",
+    feedback: "FIFO and LRU algorithms working properly.",
+    status: "Verified & Graded",
+  },
+  {
+    id: "sub-archive-4",
+    studentId: "STU-1092",
+    studentName: "Pooja Verma",
+    studentRoll: "21BCE1092",
+    subject: "CS604L Machine Learning Lab",
+    assignmentTitle: "Neural Networks PyTorch Lab Report 3",
+    submittedFile: "Pooja_Verma_Lab3_NN.pdf",
+    submittedAt: "08 Sep 2026, 04:20 PM",
+    maxMarks: 50,
+    score: "49 / 50",
+    grade: "O",
+    feedback: "Outstanding loss curve analysis and model tuning.",
+    status: "Verified & Graded",
+  },
+  {
+    id: "sub-archive-5",
+    studentId: "STU-1055",
+    studentName: "Vikram Malhotra",
+    studentRoll: "21BCE1055",
+    subject: "CS601 Operating Systems",
+    assignmentTitle: "Process Synchronization Semaphores",
+    submittedFile: "Vikram_Semaphores_Solution.c",
+    submittedAt: "02 Sep 2026, 11:00 AM",
+    maxMarks: 100,
+    score: "92 / 100",
+    grade: "O",
+    feedback: "Clean mutex lock logic.",
+    status: "Verified & Graded",
+  },
+];
+
 // Pending Student Submissions awaiting Faculty Verification
 let pendingEvaluations = [
   {
@@ -117,6 +196,15 @@ router.get('/evaluations', authenticateJWT, requireRole(['faculty', 'admin']), (
   });
 });
 
+// GET /api/faculty/all-student-submissions - Fetch all past assignment uploads per student
+router.get('/all-student-submissions', authenticateJWT, requireRole(['faculty', 'admin']), (req, res) => {
+  res.json({
+    success: true,
+    count: allStudentSubmissionsArchive.length,
+    submissions: allStudentSubmissionsArchive,
+  });
+});
+
 // POST /api/faculty/grade - Submit evaluation score & feedback for student submission
 router.post('/grade', authenticateJWT, requireRole(['faculty', 'admin']), (req, res) => {
   const { submissionId, score, grade, feedback } = req.body;
@@ -130,6 +218,23 @@ router.post('/grade', authenticateJWT, requireRole(['faculty', 'admin']), (req, 
     target.score = `${score} / ${target.maxMarks}`;
     target.grade = grade || 'A+';
     target.feedback = feedback || 'Verified & Graded by Faculty.';
+
+    // Push into historical archive
+    allStudentSubmissionsArchive.unshift({
+      id: `sub-archive-${Date.now()}`,
+      studentId: "STU-1042",
+      studentName: target.studentName,
+      studentRoll: target.studentRoll,
+      subject: target.subject,
+      assignmentTitle: target.assignmentTitle,
+      submittedFile: target.submittedFile,
+      submittedAt: target.submittedAt,
+      maxMarks: target.maxMarks,
+      score: target.score,
+      grade: target.grade,
+      feedback: target.feedback,
+      status: "Verified & Graded",
+    });
   }
 
   res.json({

@@ -66,6 +66,13 @@ export const api = {
     return res.json();
   },
 
+  getAllStudentSubmissions: async () => {
+    const res = await fetch(`${API_BASE_URL}/faculty/all-student-submissions`, {
+      headers: getHeaders(),
+    });
+    return res.json();
+  },
+
   gradeSubmission: async (gradeData) => {
     const res = await fetch(`${API_BASE_URL}/faculty/grade`, {
       method: 'POST',

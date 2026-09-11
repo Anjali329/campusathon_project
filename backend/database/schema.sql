@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS duty_leave_requests (
     submitted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- 3. Assignments & Submissions
+-- 3. Assignments & Student Submissions Archive
 CREATE TABLE IF NOT EXISTS assignments (
     id VARCHAR(50) PRIMARY KEY,
     title VARCHAR(150) NOT NULL,
@@ -58,14 +58,18 @@ CREATE TABLE IF NOT EXISTS submissions (
     id SERIAL PRIMARY KEY,
     assignment_id VARCHAR(50) REFERENCES assignments(id),
     student_id VARCHAR(50) REFERENCES users(id),
-    submitted_file TEXT,
+    student_name VARCHAR(100) NOT NULL,
+    student_roll VARCHAR(50) NOT NULL,
+    subject VARCHAR(100) NOT NULL,
+    assignment_title VARCHAR(150) NOT NULL,
+    submitted_file TEXT NOT NULL,
     score VARCHAR(20),
     grade VARCHAR(5),
     feedback TEXT,
     submitted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- 4. Examination Timetables & Grade Cards (Faculty/Exam Cell Managed)
+-- 4. Examination Timetables & Student Grade Cards Database
 CREATE TABLE IF NOT EXISTS exam_schedules (
     id VARCHAR(50) PRIMARY KEY,
     course_code VARCHAR(20) NOT NULL,
@@ -78,13 +82,25 @@ CREATE TABLE IF NOT EXISTS exam_schedules (
     faculty_updated_by VARCHAR(100) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS student_grade_cards (
+    id SERIAL PRIMARY KEY,
+    student_id VARCHAR(50) REFERENCES users(id),
+    student_roll VARCHAR(50) NOT NULL,
+    semester VARCHAR(20) NOT NULL,
+    sgpa NUMERIC(3, 2) NOT NULL,
+    total_credits INT NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    courses_json JSONB NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- 5. Smart Notices with AI NLP Categorization
 CREATE TABLE IF NOT EXISTS notices (
     id VARCHAR(50) PRIMARY KEY,
     title VARCHAR(200) NOT NULL,
     category VARCHAR(50) NOT NULL,
     urgency VARCHAR(20) NOT NULL,
-    nlp_tags TEXT[], -- PostgreSQL Array of Tags
+    nlp_tags TEXT[],
     publisher VARCHAR(100) NOT NULL,
     summary TEXT NOT NULL,
     content TEXT NOT NULL,
