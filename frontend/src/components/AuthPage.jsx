@@ -58,11 +58,11 @@ export default function AuthPage({ onLoginSuccess, setActiveRole }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 sm:p-6 lg:p-12 relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4 sm:p-6 lg:p-12 relative overflow-hidden font-sans">
       
-      {/* Background Radial Glow Accents */}
-      <div className="absolute top-1/4 left-10 w-[500px] h-[500px] bg-blue-600/15 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute bottom-10 right-10 w-[450px] h-[450px] bg-indigo-600/15 rounded-full blur-3xl pointer-events-none"></div>
+      {/* Background Soft Blue Accents */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-blue-50/60 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-indigo-50/60 rounded-full blur-3xl pointer-events-none"></div>
 
       {/* Main 2-Column Split Container */}
       <div className="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center relative z-10">
@@ -70,15 +70,15 @@ export default function AuthPage({ onLoginSuccess, setActiveRole }) {
         {/* LEFT COLUMN: Clean CampusFlow Logo & Heading */}
         <div className="lg:col-span-5 space-y-4 text-center lg:text-left flex flex-col items-center lg:items-start justify-center">
           
-          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-blue-600 flex items-center justify-center shadow-2xl shadow-blue-500/30 mb-1">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-blue-600 flex items-center justify-center shadow-xl shadow-blue-500/20 mb-1">
             <Sparkles className="w-9 h-9 sm:w-11 sm:h-11 text-white" />
           </div>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight">
-            Campus<span className="text-blue-400">Flow</span>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight">
+            Campus<span className="text-blue-600">Flow</span>
           </h1>
 
-          <p className="text-sm sm:text-base text-slate-400 font-medium leading-relaxed max-w-sm">
+          <p className="text-sm sm:text-base text-slate-600 font-semibold leading-relaxed max-w-sm">
             Unified Student Journey & Smart Action Platform
           </p>
 
@@ -86,7 +86,7 @@ export default function AuthPage({ onLoginSuccess, setActiveRole }) {
 
         {/* RIGHT COLUMN: White Authentication Card */}
         <div className="lg:col-span-7">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 space-y-5">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/60 border border-slate-200/80 space-y-5">
             
             {/* Sign In / Sign Up Tab Switcher */}
             <div className="flex bg-slate-100 p-1 rounded-xl">
@@ -271,7 +271,7 @@ export default function AuthPage({ onLoginSuccess, setActiveRole }) {
 
           </div>
 
-          <p className="text-[11px] text-slate-500 text-center mt-4">
+          <p className="text-[11px] text-slate-400 text-center mt-4">
             Secured with JWT & Role-Based Access Control • Campusathon 2026
           </p>
         </div>
