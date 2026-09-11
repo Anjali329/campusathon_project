@@ -24,13 +24,19 @@ export default function AuthPage({ onLoginSuccess, setActiveRole }) {
   const handleEmailAuth = (e) => {
     e.preventDefault();
     setActiveRole(role);
-    let userProfile = currentUser;
-    if (role === 'faculty') userProfile = facultyUser;
-    if (role === 'admin') userProfile = adminUser;
+    let baseProfile = currentUser;
+    if (role === 'faculty') baseProfile = facultyUser;
+    if (role === 'admin') baseProfile = adminUser;
     
-    if (fullName) {
-      userProfile = { ...userProfile, name: fullName, email: email || userProfile.email };
-    }
+    const userProfile = {
+      ...baseProfile,
+      name: fullName || baseProfile.name,
+      email: email || baseProfile.email,
+      rollNo: rollNo || baseProfile.rollNo || "21BCE1042",
+      rollNumber: rollNo || baseProfile.rollNo || "21BCE1042",
+      role: role,
+    };
+
     onLoginSuccess(userProfile);
   };
 
@@ -44,6 +50,8 @@ export default function AuthPage({ onLoginSuccess, setActiveRole }) {
         ...currentUser,
         name: selectedAccount.name,
         email: selectedAccount.email,
+        rollNo: "21BCE1042",
+        rollNumber: "21BCE1042",
         avatar: selectedAccount.picture,
       });
     }, 1000);
@@ -183,13 +191,14 @@ export default function AuthPage({ onLoginSuccess, setActiveRole }) {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1">Registration / Roll No</label>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">Registration / Roll No (RBT)</label>
                     <input 
                       type="text" 
                       value={rollNo}
                       onChange={(e) => setRollNo(e.target.value)}
                       placeholder="e.g. 21BCE1042"
                       className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
                     />
                   </div>
                 </>
