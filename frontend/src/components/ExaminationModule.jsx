@@ -14,9 +14,10 @@ import {
 import { upcomingExams, currentUser } from '../data/mockData';
 import { api } from '../services/api';
 
-export default function ExaminationModule({ activeRole }) {
+export default function ExaminationModule({ activeRole, user }) {
   const [activeSubTab, setActiveSubTab] = useState('timetable'); // 'timetable' or 'gradecards'
   const [selectedSem, setSelectedSem] = useState('Sem 5');
+  const profile = user || currentUser;
   
   // Faculty timetable entries state
   const [examTimetable, setExamTimetable] = useState([
@@ -275,7 +276,7 @@ export default function ExaminationModule({ activeRole }) {
           <div className="bg-gradient-to-r from-slate-900 to-indigo-900 text-white rounded-xl p-5 shadow-xs flex items-center justify-between">
             <div>
               <span className="text-xs text-blue-300 font-bold uppercase">{selectedSem} Grade Sheet Summary</span>
-              <h2 className="text-lg font-bold text-white mt-0.5">{currentUser.name} • {currentUser.rollNo}</h2>
+              <h2 className="text-lg font-bold text-white mt-0.5">{profile.name} • {profile.rollNo || profile.rollNumber || "21BCE1092"}</h2>
               <p className="text-xs text-slate-300">Total Credits Earned: {currentGradeCard.totalCredits} • Status: <strong className="text-emerald-400">{currentGradeCard.status}</strong></p>
             </div>
 

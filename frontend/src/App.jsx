@@ -109,6 +109,7 @@ export default function App() {
           {activeTab === 'home' && (
             <HomePage 
               activeRole={activeRole}
+              user={user}
               setActiveTab={setActiveTab} 
               onOpenCorrectionModal={() => setIsCorrectionOpen(true)}
             />
@@ -143,13 +144,14 @@ export default function App() {
           {activeTab === 'exams' && (
             <ExaminationModule 
               activeRole={activeRole} 
+              user={user}
             />
           )}
 
           {activeTab === 'notices' && (
             <NoticesModule 
               activeRole={activeRole} 
-              onOpenNoticeModal={(not) => setSelectedNotice(not)} 
+              onOpenNoticeModal={(not) => setSelectedNotice(null)} 
               onOpenPublishNoticeModal={() => setIsPublishNoticeOpen(true)} 
             />
           )}

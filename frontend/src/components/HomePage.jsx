@@ -18,16 +18,19 @@ import {
 import { currentUser } from '../data/mockData';
 import FacultyDashboard from './FacultyDashboard';
 
-export default function HomePage({ activeRole, setActiveTab, onOpenCorrectionModal }) {
+export default function HomePage({ activeRole, user, setActiveTab, onOpenCorrectionModal }) {
   const [searchQuery, setSearchQuery] = useState('');
 
   if (activeRole === 'faculty') {
     return (
       <FacultyDashboard 
+        user={user}
         setActiveTab={setActiveTab}
       />
     );
   }
+
+  const profile = user || currentUser;
 
   const modules = [
     {
@@ -133,25 +136,25 @@ export default function HomePage({ activeRole, setActiveTab, onOpenCorrectionMod
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       
-      {/* Top Student Header Bar */}
+      {/* Top Dynamic Student Header Bar */}
       <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4">
         
         {/* Left Profile Info */}
         <div className="flex items-center space-x-3.5 w-full md:w-auto">
           <img 
-            src={currentUser.avatar} 
-            alt={currentUser.name} 
+            src={profile.avatar || profile.avatar_url || currentUser.avatar} 
+            alt={profile.name} 
             className="w-12 h-12 rounded-full object-cover ring-2 ring-blue-500/50 shadow-sm"
           />
           <div>
             <div className="flex items-center space-x-2">
-              <h2 className="text-base font-bold text-slate-900 uppercase tracking-tight">{currentUser.name}</h2>
+              <h2 className="text-base font-bold text-slate-900 uppercase tracking-tight">{profile.name}</h2>
               <span className="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span> Active Student
               </span>
             </div>
             <p className="text-xs text-slate-500 font-medium">
-              Registration No: <strong className="text-slate-800 font-mono">{currentUser.rollNo}</strong> • {currentUser.department}
+              Registration No: <strong className="text-slate-800 font-mono">{profile.rollNo || profile.rollNumber || "21BCE1092"}</strong> • {profile.department || "Computer Science & Engineering"}
             </p>
           </div>
         </div>
