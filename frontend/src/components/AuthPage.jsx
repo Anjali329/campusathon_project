@@ -7,13 +7,7 @@ import {
   ArrowRight, 
   GraduationCap, 
   UserCheck, 
-  Building2, 
-  ShieldCheck,
-  CheckCircle2,
-  Zap,
-  BookOpen,
-  BellRing,
-  Award
+  Building2
 } from 'lucide-react';
 import { currentUser, facultyUser, adminUser } from '../data/mockData';
 
@@ -71,85 +65,27 @@ export default function AuthPage({ onLoginSuccess, setActiveRole }) {
       <div className="absolute bottom-10 right-10 w-[450px] h-[450px] bg-indigo-600/15 rounded-full blur-3xl pointer-events-none"></div>
 
       {/* Main 2-Column Split Container */}
-      <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
+      <div className="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center relative z-10">
         
-        {/* LEFT COLUMN: CampusFlow Branding & Core Platform Highlights */}
-        <div className="lg:col-span-6 space-y-6 text-left">
+        {/* LEFT COLUMN: Clean CampusFlow Logo & Heading */}
+        <div className="lg:col-span-5 space-y-4 text-center lg:text-left flex flex-col items-center lg:items-start justify-center">
           
-          {/* Logo & Title */}
-          <div className="space-y-3">
-            <div className="inline-flex items-center space-x-3 bg-blue-950/80 border border-blue-800/60 px-3.5 py-1.5 rounded-2xl shadow-inner">
-              <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/30">
-                <Sparkles className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xs font-bold text-blue-300 tracking-wide uppercase">Institutional Command Center</span>
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight">
-              Campus<span className="text-blue-400">Flow</span>
-            </h1>
-
-            <p className="text-sm sm:text-base text-slate-300 font-medium leading-relaxed max-w-xl">
-              Unified Student Journey & Smart Action Platform bringing scattered academic deadlines, attendance risk alerts, assignments, exam timetables, and digital portfolios into one place.
-            </p>
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl bg-blue-600 flex items-center justify-center shadow-2xl shadow-blue-500/30 mb-1">
+            <Sparkles className="w-9 h-9 sm:w-11 sm:h-11 text-white" />
           </div>
 
-          {/* Key Platform Value Cards */}
-          <div className="space-y-3.5 pt-2">
-            
-            <div className="flex items-start space-x-3.5 bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800/80 shadow-xs">
-              <div className="p-2.5 bg-blue-600/20 text-blue-400 rounded-xl mt-0.5 border border-blue-500/20">
-                <Zap className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-bold text-white text-xs sm:text-sm">Smart Priority Engine</h4>
-                <p className="text-xs text-slate-400 mt-0.5 leading-snug">
-                  Converts student information into prioritized action queues based on deadline urgency & attendance risk.
-                </p>
-              </div>
-            </div>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight">
+            Campus<span className="text-blue-400">Flow</span>
+          </h1>
 
-            <div className="flex items-start space-x-3.5 bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800/80 shadow-xs">
-              <div className="p-2.5 bg-emerald-600/20 text-emerald-400 rounded-xl mt-0.5 border border-emerald-500/20">
-                <ShieldCheck className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-bold text-white text-xs sm:text-sm">Faculty-Controlled Attendance & RBAC</h4>
-                <p className="text-xs text-slate-400 mt-0.5 leading-snug">
-                  Secure access control for Students, Faculty, and Administrators with duty leave correction claims.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-start space-x-3.5 bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800/80 shadow-xs">
-              <div className="p-2.5 bg-purple-600/20 text-purple-400 rounded-xl mt-0.5 border border-purple-500/20">
-                <BellRing className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-bold text-white text-xs sm:text-sm">NLP Notice Classification</h4>
-                <p className="text-xs text-slate-400 mt-0.5 leading-snug">
-                  Automatic AI tagging of institutional notices into Academic Risk, Placement, and Examination categories.
-                </p>
-              </div>
-            </div>
-
-          </div>
-
-          <div className="pt-2 text-xs text-slate-500 flex items-center space-x-4">
-            <span className="flex items-center space-x-1.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span>JWT Authenticated</span>
-            </span>
-            <span className="flex items-center space-x-1.5">
-              <CheckCircle2 className="w-4 h-4 text-blue-400" />
-              <span>Supabase / PostgreSQL Ready</span>
-            </span>
-          </div>
+          <p className="text-sm sm:text-base text-slate-400 font-medium leading-relaxed max-w-sm">
+            Unified Student Journey & Smart Action Platform
+          </p>
 
         </div>
 
         {/* RIGHT COLUMN: White Authentication Card */}
-        <div className="lg:col-span-6">
+        <div className="lg:col-span-7">
           <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 space-y-5">
             
             {/* Sign In / Sign Up Tab Switcher */}
