@@ -9,7 +9,11 @@ import {
   UserCheck, 
   Building2, 
   ShieldCheck,
-  CheckCircle2
+  CheckCircle2,
+  Zap,
+  BookOpen,
+  BellRing,
+  Award
 } from 'lucide-react';
 import { currentUser, facultyUser, adminUser } from '../data/mockData';
 
@@ -60,216 +64,281 @@ export default function AuthPage({ onLoginSuccess, setActiveRole }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 sm:p-6 relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 sm:p-6 lg:p-12 relative overflow-hidden font-sans">
       
-      {/* Background Glow Accents */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute bottom-10 right-10 w-80 h-80 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      {/* Background Radial Glow Accents */}
+      <div className="absolute top-1/4 left-10 w-[500px] h-[500px] bg-blue-600/15 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute bottom-10 right-10 w-[450px] h-[450px] bg-indigo-600/15 rounded-full blur-3xl pointer-events-none"></div>
 
-      <div className="max-w-md w-full space-y-6 relative z-10">
+      {/* Main 2-Column Split Container */}
+      <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
         
-        {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600 text-white shadow-xl shadow-blue-500/20 mb-1">
-            <Sparkles className="w-8 h-8" />
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Campus<span className="text-blue-400">Flow</span>
-          </h1>
-          <p className="text-xs text-slate-400">
-            Unified Student Journey & Smart Action Platform
-          </p>
-        </div>
-
-        {/* Auth Card */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 space-y-5">
+        {/* LEFT COLUMN: CampusFlow Branding & Core Platform Highlights */}
+        <div className="lg:col-span-6 space-y-6 text-left">
           
-          {/* Sign In / Sign Up Tab Switcher */}
-          <div className="flex bg-slate-100 p-1 rounded-xl">
-            <button 
-              onClick={() => setAuthMode('signin')}
-              className={`flex-1 py-2 text-xs font-bold rounded-lg transition ${
-                authMode === 'signin' ? 'bg-white text-blue-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              Sign In
-            </button>
-            <button 
-              onClick={() => setAuthMode('signup')}
-              className={`flex-1 py-2 text-xs font-bold rounded-lg transition ${
-                authMode === 'signup' ? 'bg-white text-blue-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              New Student Sign Up
-            </button>
-          </div>
-
-          {/* Continue with Google Button */}
+          {/* Logo & Title */}
           <div className="space-y-3">
-            <button 
-              onClick={() => setShowGoogleModal(true)}
-              className="w-full flex items-center justify-center space-x-3 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs py-3 px-4 rounded-xl border border-slate-300 shadow-xs transition hover:border-slate-400"
-            >
-              {/* Google G Logo SVG */}
-              <svg className="w-4 h-4" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
-                <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.29v3.15C3.26 21.3 7.31 24 12 24z"/>
-                <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.29C.47 8.2.0 10.04.0 12s.47 3.8 1.29 5.42l3.99-3.15z"/>
-                <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.58l3.99 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-              </svg>
-              <span>Continue with Google</span>
-            </button>
-
-            <div className="flex items-center space-x-3 my-2">
-              <div className="h-px bg-slate-200 flex-1"></div>
-              <span className="text-[10px] text-slate-400 font-bold uppercase">Or with Email</span>
-              <div className="h-px bg-slate-200 flex-1"></div>
+            <div className="inline-flex items-center space-x-3 bg-blue-950/80 border border-blue-800/60 px-3.5 py-1.5 rounded-2xl shadow-inner">
+              <div className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/30">
+                <Sparkles className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-xs font-bold text-blue-300 tracking-wide uppercase">Institutional Command Center</span>
             </div>
+
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight">
+              Campus<span className="text-blue-400">Flow</span>
+            </h1>
+
+            <p className="text-sm sm:text-base text-slate-300 font-medium leading-relaxed max-w-xl">
+              Unified Student Journey & Smart Action Platform bringing scattered academic deadlines, attendance risk alerts, assignments, exam timetables, and digital portfolios into one place.
+            </p>
           </div>
 
-          {/* Email Form */}
-          <form onSubmit={handleEmailAuth} className="space-y-3">
+          {/* Key Platform Value Cards */}
+          <div className="space-y-3.5 pt-2">
             
-            {/* Role Selection Buttons */}
-            <div>
-              <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1">Select Role</label>
-              <div className="grid grid-cols-3 gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => setRole('student')}
-                  className={`py-1.5 px-2 text-[11px] font-bold rounded-lg border flex items-center justify-center space-x-1 transition ${
-                    role === 'student' ? 'bg-blue-50 text-blue-700 border-blue-300' : 'bg-slate-50 text-slate-600 border-slate-200'
-                  }`}
-                >
-                  <GraduationCap className="w-3.5 h-3.5" />
-                  <span>Student</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setRole('faculty')}
-                  className={`py-1.5 px-2 text-[11px] font-bold rounded-lg border flex items-center justify-center space-x-1 transition ${
-                    role === 'faculty' ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-slate-50 text-slate-600 border-slate-200'
-                  }`}
-                >
-                  <UserCheck className="w-3.5 h-3.5" />
-                  <span>Faculty</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setRole('admin')}
-                  className={`py-1.5 px-2 text-[11px] font-bold rounded-lg border flex items-center justify-center space-x-1 transition ${
-                    role === 'admin' ? 'bg-purple-50 text-purple-700 border-purple-300' : 'bg-slate-50 text-slate-600 border-slate-200'
-                  }`}
-                >
-                  <Building2 className="w-3.5 h-3.5" />
-                  <span>Admin</span>
-                </button>
+            <div className="flex items-start space-x-3.5 bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800/80 shadow-xs">
+              <div className="p-2.5 bg-blue-600/20 text-blue-400 rounded-xl mt-0.5 border border-blue-500/20">
+                <Zap className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-bold text-white text-xs sm:text-sm">Smart Priority Engine</h4>
+                <p className="text-xs text-slate-400 mt-0.5 leading-snug">
+                  Converts student information into prioritized action queues based on deadline urgency & attendance risk.
+                </p>
               </div>
             </div>
 
-            {authMode === 'signup' && (
-              <>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Full Name</label>
-                  <div className="relative">
-                    <User className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <div className="flex items-start space-x-3.5 bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800/80 shadow-xs">
+              <div className="p-2.5 bg-emerald-600/20 text-emerald-400 rounded-xl mt-0.5 border border-emerald-500/20">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-bold text-white text-xs sm:text-sm">Faculty-Controlled Attendance & RBAC</h4>
+                <p className="text-xs text-slate-400 mt-0.5 leading-snug">
+                  Secure access control for Students, Faculty, and Administrators with duty leave correction claims.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start space-x-3.5 bg-slate-900/80 p-3.5 rounded-2xl border border-slate-800/80 shadow-xs">
+              <div className="p-2.5 bg-purple-600/20 text-purple-400 rounded-xl mt-0.5 border border-purple-500/20">
+                <BellRing className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-bold text-white text-xs sm:text-sm">NLP Notice Classification</h4>
+                <p className="text-xs text-slate-400 mt-0.5 leading-snug">
+                  Automatic AI tagging of institutional notices into Academic Risk, Placement, and Examination categories.
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+          <div className="pt-2 text-xs text-slate-500 flex items-center space-x-4">
+            <span className="flex items-center space-x-1.5">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <span>JWT Authenticated</span>
+            </span>
+            <span className="flex items-center space-x-1.5">
+              <CheckCircle2 className="w-4 h-4 text-blue-400" />
+              <span>Supabase / PostgreSQL Ready</span>
+            </span>
+          </div>
+
+        </div>
+
+        {/* RIGHT COLUMN: White Authentication Card */}
+        <div className="lg:col-span-6">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-100 space-y-5">
+            
+            {/* Sign In / Sign Up Tab Switcher */}
+            <div className="flex bg-slate-100 p-1 rounded-xl">
+              <button 
+                onClick={() => setAuthMode('signin')}
+                className={`flex-1 py-2 text-xs font-bold rounded-lg transition ${
+                  authMode === 'signin' ? 'bg-white text-blue-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Sign In
+              </button>
+              <button 
+                onClick={() => setAuthMode('signup')}
+                className={`flex-1 py-2 text-xs font-bold rounded-lg transition ${
+                  authMode === 'signup' ? 'bg-white text-blue-700 shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                New Student Sign Up
+              </button>
+            </div>
+
+            {/* Continue with Google Button */}
+            <div className="space-y-3">
+              <button 
+                onClick={() => setShowGoogleModal(true)}
+                className="w-full flex items-center justify-center space-x-3 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs py-3 px-4 rounded-xl border border-slate-300 shadow-xs transition hover:border-slate-400"
+              >
+                {/* Google G Logo SVG */}
+                <svg className="w-4 h-4" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.29v3.15C3.26 21.3 7.31 24 12 24z"/>
+                  <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.29C.47 8.2.0 10.04.0 12s.47 3.8 1.29 5.42l3.99-3.15z"/>
+                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.58l3.99 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                </svg>
+                <span>Continue with Google</span>
+              </button>
+
+              <div className="flex items-center space-x-3 my-2">
+                <div className="h-px bg-slate-200 flex-1"></div>
+                <span className="text-[10px] text-slate-400 font-bold uppercase">Or with Email</span>
+                <div className="h-px bg-slate-200 flex-1"></div>
+              </div>
+            </div>
+
+            {/* Email Form */}
+            <form onSubmit={handleEmailAuth} className="space-y-3">
+              
+              {/* Role Selection Buttons */}
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1">Select Role</label>
+                <div className="grid grid-cols-3 gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setRole('student')}
+                    className={`py-1.5 px-2 text-[11px] font-bold rounded-lg border flex items-center justify-center space-x-1 transition ${
+                      role === 'student' ? 'bg-blue-50 text-blue-700 border-blue-300' : 'bg-slate-50 text-slate-600 border-slate-200'
+                    }`}
+                  >
+                    <GraduationCap className="w-3.5 h-3.5" />
+                    <span>Student</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setRole('faculty')}
+                    className={`py-1.5 px-2 text-[11px] font-bold rounded-lg border flex items-center justify-center space-x-1 transition ${
+                      role === 'faculty' ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-slate-50 text-slate-600 border-slate-200'
+                    }`}
+                  >
+                    <UserCheck className="w-3.5 h-3.5" />
+                    <span>Faculty</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setRole('admin')}
+                    className={`py-1.5 px-2 text-[11px] font-bold rounded-lg border flex items-center justify-center space-x-1 transition ${
+                      role === 'admin' ? 'bg-purple-50 text-purple-700 border-purple-300' : 'bg-slate-50 text-slate-600 border-slate-200'
+                    }`}
+                  >
+                    <Building2 className="w-3.5 h-3.5" />
+                    <span>Admin</span>
+                  </button>
+                </div>
+              </div>
+
+              {authMode === 'signup' && (
+                <>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">Full Name</label>
+                    <div className="relative">
+                      <User className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                      <input 
+                        type="text" 
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder="e.g. Rahul Sharma"
+                        className="w-full text-xs pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">Registration / Roll No</label>
                     <input 
                       type="text" 
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      placeholder="e.g. Rahul Sharma"
-                      className="w-full text-xs pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
+                      value={rollNo}
+                      onChange={(e) => setRollNo(e.target.value)}
+                      placeholder="e.g. 21BCE1042"
+                      className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-                </div>
+                </>
+              )}
 
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Registration / Roll No</label>
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Institutional Email</label>
+                <div className="relative">
+                  <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input 
-                    type="text" 
-                    value={rollNo}
-                    onChange={(e) => setRollNo(e.target.value)}
-                    placeholder="e.g. 21BCE1042"
-                    className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    type="email" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="name@campus.edu"
+                    className="w-full text-xs pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
                   />
                 </div>
-              </>
-            )}
+              </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Institutional Email</label>
-              <div className="relative">
-                <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input 
-                  type="email" 
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@campus.edu"
-                  className="w-full text-xs pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Password</label>
+                <div className="relative">
+                  <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input 
+                    type="password" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full text-xs pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+              </div>
+
+              <button 
+                type="submit"
+                className="w-full flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs py-2.5 rounded-xl shadow-md transition pt-2.5 mt-2"
+              >
+                <span>{authMode === 'signin' ? 'Sign In to Portal' : 'Create Account'}</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </form>
+
+            {/* Quick Demo Login Presets */}
+            <div className="pt-3 border-t border-slate-100 space-y-2">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block text-center">
+                Instant 1-Click Demo Login
+              </span>
+              <div className="grid grid-cols-3 gap-1.5">
+                <button 
+                  onClick={() => handleQuickDemoLogin('student')}
+                  className="py-1.5 px-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-[10px] rounded-lg border border-blue-200 transition"
+                >
+                  Demo Student
+                </button>
+                <button 
+                  onClick={() => handleQuickDemoLogin('faculty')}
+                  className="py-1.5 px-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-[10px] rounded-lg border border-emerald-200 transition"
+                >
+                  Demo Faculty
+                </button>
+                <button 
+                  onClick={() => handleQuickDemoLogin('admin')}
+                  className="py-1.5 px-2 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-[10px] rounded-lg border border-purple-200 transition"
+                >
+                  Demo Admin
+                </button>
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Password</label>
-              <div className="relative">
-                <Lock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input 
-                  type="password" 
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full text-xs pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
-              </div>
-            </div>
-
-            <button 
-              type="submit"
-              className="w-full flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs py-2.5 rounded-xl shadow-md transition pt-2.5 mt-2"
-            >
-              <span>{authMode === 'signin' ? 'Sign In to Portal' : 'Create Account'}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </form>
-
-          {/* Quick Demo Login Presets */}
-          <div className="pt-3 border-t border-slate-100 space-y-2">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block text-center">
-              Instant 1-Click Demo Login
-            </span>
-            <div className="grid grid-cols-3 gap-1.5">
-              <button 
-                onClick={() => handleQuickDemoLogin('student')}
-                className="py-1.5 px-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-[10px] rounded-lg border border-blue-200 transition"
-              >
-                Demo Student
-              </button>
-              <button 
-                onClick={() => handleQuickDemoLogin('faculty')}
-                className="py-1.5 px-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-[10px] rounded-lg border border-emerald-200 transition"
-              >
-                Demo Faculty
-              </button>
-              <button 
-                onClick={() => handleQuickDemoLogin('admin')}
-                className="py-1.5 px-2 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-[10px] rounded-lg border border-purple-200 transition"
-              >
-                Demo Admin
-              </button>
-            </div>
           </div>
 
+          <p className="text-[11px] text-slate-500 text-center mt-4">
+            Secured with JWT & Role-Based Access Control • Campusathon 2026
+          </p>
         </div>
-
-        <p className="text-[11px] text-slate-500 text-center">
-          Secured with JWT & Role-Based Access Control • Campusathon 2026
-        </p>
 
       </div>
 
