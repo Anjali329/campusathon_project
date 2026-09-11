@@ -49,14 +49,6 @@ export default function AuthPage({ onLoginSuccess, setActiveRole }) {
     }, 1000);
   };
 
-  const handleQuickDemoLogin = (demoRole) => {
-    setActiveRole(demoRole);
-    let userProfile = currentUser;
-    if (demoRole === 'faculty') userProfile = facultyUser;
-    if (demoRole === 'admin') userProfile = adminUser;
-    onLoginSuccess(userProfile);
-  };
-
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-4 sm:p-6 lg:p-12 relative overflow-hidden font-sans">
       
@@ -241,33 +233,6 @@ export default function AuthPage({ onLoginSuccess, setActiveRole }) {
                 <ArrowRight className="w-4 h-4" />
               </button>
             </form>
-
-            {/* Quick Demo Login Presets */}
-            <div className="pt-3 border-t border-slate-100 space-y-2">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block text-center">
-                Instant 1-Click Demo Login
-              </span>
-              <div className="grid grid-cols-3 gap-1.5">
-                <button 
-                  onClick={() => handleQuickDemoLogin('student')}
-                  className="py-1.5 px-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-[10px] rounded-lg border border-blue-200 transition"
-                >
-                  Demo Student
-                </button>
-                <button 
-                  onClick={() => handleQuickDemoLogin('faculty')}
-                  className="py-1.5 px-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-[10px] rounded-lg border border-emerald-200 transition"
-                >
-                  Demo Faculty
-                </button>
-                <button 
-                  onClick={() => handleQuickDemoLogin('admin')}
-                  className="py-1.5 px-2 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-[10px] rounded-lg border border-purple-200 transition"
-                >
-                  Demo Admin
-                </button>
-              </div>
-            </div>
 
           </div>
 
