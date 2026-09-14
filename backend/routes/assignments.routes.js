@@ -99,4 +99,31 @@ router.post('/create', authenticateJWT, requireRole(['faculty', 'admin']), (req,
   });
 });
 
+// POST /api/assignments/grade - Grade assignment and update marks for student view
+export function updateAssignmentGrade(assignmentId, score, grade, feedback) {
+  const target = assignmentsData.find(a => a.id === assignmentId || a.title?.includes(assignmentId));
+  if (target) {
+    target.status = "Submitted";
+    target.score = score;
+    target.grade = grade;
+    target.feedback = feedback;
+    target.submittedOn = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  } else if (assignmentsData.length > 0) {
+    const pending = assignmentsData.find(a => a.status !== "Submitted") || assignmentsData[0];
+    if (pending) {
+      pending.status = "Submitted";
+      pending.score = score;
+      pending.grade = grade;
+      pending.feedback = feedback;
+      pending.submittedOn = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+  }
+}
+
+router.post('/grade', authenticateJWT, requireRole(['faculty', 'admin']), (req, res) => {
+  const { assignmentId, score, grade, feedback } = req.body;
+  updateAssignmentGrade(assignmentId, score, grade, feedback);
+  res.json({ success: true, message: 'Assignment marks & grade updated for student view!', assignments: assignmentsData });
+});
+
 export default router;

@@ -1,5 +1,6 @@
 import express from 'express';
 import { authenticateJWT, requireRole } from '../middleware/auth.js';
+import { updateAssignmentGrade } from './assignments.routes.js';
 
 const router = express.Router();
 
@@ -168,13 +169,42 @@ let pendingEvaluations = [
   }
 ];
 
-// GET /api/faculty/schedule - Get today's assigned lectures
-router.get('/schedule', authenticateJWT, requireRole(['faculty', 'admin']), (req, res) => {
+// GET /api/faculty/schedule - Get today's assigned lectures (accessible by both faculty and students)
+router.get('/schedule', authenticateJWT, (req, res) => {
   res.json({
     success: true,
     facultyName: req.user.name || "Prof. Ananya Sen",
     today: new Date().toLocaleDateString('en-GB', { weekday: 'long', day: '2-digit', month: 'short', year: 'numeric' }),
     count: todaySchedule.length,
+    schedule: todaySchedule,
+  });
+});
+
+// POST /api/faculty/add-lecture - Faculty Add New Lecture Slot (RBAC: faculty, admin)
+router.post('/add-lecture', authenticateJWT, requireRole(['faculty', 'admin']), (req, res) => {
+  const { time, subjectCode, subjectName, room, batch, totalStudents } = req.body;
+  if (!subjectName || !time) {
+    return res.status(400).json({ success: false, message: 'Subject name and time are required.' });
+  }
+
+  const newLec = {
+    id: `lec-${Date.now()}`,
+    time: time || '02:00 PM - 03:00 PM',
+    subjectCode: subjectCode || 'CS602',
+    subjectName,
+    room: room || 'Lecture Hall LT-4',
+    batch: batch || 'B.Tech CSE - 6th Sem (Sec A)',
+    totalStudents: parseInt(totalStudents) || 60,
+    status: 'Upcoming Today',
+    markedAttendance: false,
+  };
+
+  todaySchedule.push(newLec);
+
+  res.status(201).json({
+    success: true,
+    message: `Lecture slot for ${subjectName} added to today's timetable schedule!`,
+    lecture: newLec,
     schedule: todaySchedule,
   });
 });
@@ -235,11 +265,17 @@ router.post('/grade', authenticateJWT, requireRole(['faculty', 'admin']), (req, 
       feedback: target.feedback,
       status: "Verified & Graded",
     });
+
+    // Also update main assignmentsData for Student view
+    updateAssignmentGrade(target.assignmentId || target.assignmentTitle, target.score, target.grade, target.feedback);
+  } else {
+    // If not in pendingEvaluations, update matching assignment directly
+    updateAssignmentGrade(submissionId, `${score} / 50`, grade || 'A+', feedback || 'Verified & Graded by Faculty.');
   }
 
   res.json({
     success: true,
-    message: `Marks & Grade (${grade || 'A+'}) verified and saved to Central ERP!`,
+    message: `Marks & Grade (${grade || 'A+'}) verified and saved to Central ERP! Student view updated.`,
     submission: target,
   });
 });

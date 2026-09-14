@@ -144,7 +144,12 @@ export default function FacultyDashboard({ user, setActiveTab, onOpenGradeModal,
       status: "Upcoming Today",
       markedAttendance: false
     };
-    setSchedule([...schedule, newLec]);
+    api.addFacultyLecture(newLec).then(res => {
+      if (res.success && res.schedule) setSchedule(res.schedule);
+      else setSchedule([...schedule, newLec]);
+    }).catch(() => {
+      setSchedule([...schedule, newLec]);
+    });
     setIsAddLectureOpen(false);
     setToastMessage(`New lecture slot for ${newLecName} added to today's schedule!`);
     setTimeout(() => setToastMessage(null), 4000);

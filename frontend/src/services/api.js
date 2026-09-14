@@ -52,6 +52,15 @@ export const api = {
     return res.json();
   },
 
+  addFacultyLecture: async (lecData) => {
+    const res = await fetch(`${API_BASE_URL}/faculty/add-lecture`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(lecData),
+    });
+    return res.json();
+  },
+
   getFacultyDefaulters: async () => {
     const res = await fetch(`${API_BASE_URL}/faculty/defaulters`, {
       headers: getHeaders(),

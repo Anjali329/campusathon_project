@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Clock, 
   FileText, 
@@ -6,18 +6,74 @@ import {
   Calendar, 
   BellRing, 
   Search,
-  ArrowUpRight
+  ArrowUpRight,
+  UserCheck
 } from 'lucide-react';
 import { academicTimeline } from '../data/mockData';
+import { api } from '../services/api';
 
 export default function TimelineModule({ setActiveTab }) {
   const [filterType, setFilterType] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [items, setItems] = useState(academicTimeline);
+  const [todayLectures, setTodayLectures] = useState([]);
 
-  const filteredItems = academicTimeline.filter(item => {
+  useEffect(() => {
+    // Fetch live exam timetables & faculty schedule
+    Promise.all([
+      api.getFacultySchedule().catch(() => ({})),
+      api.getExamsTimetable().catch(() => ({})),
+      api.getAssignments().catch(() => ({}))
+    ]).then(([schedRes, examRes, asgRes]) => {
+      let combined = [...academicTimeline];
+
+      if (schedRes?.success && schedRes?.schedule) {
+        setTodayLectures(schedRes.schedule);
+      }
+
+      if (examRes?.success && examRes?.timetable) {
+        const liveExams = examRes.timetable.map(ex => ({
+          id: `ex-live-${ex.id}`,
+          date: ex.date,
+          time: ex.time,
+          title: `${ex.subject} (${ex.type})`,
+          type: 'Examination',
+          category: 'Exams',
+          urgency: 'Critical',
+          subject: ex.code,
+          description: `Venue: ${ex.venue} • Seat No: ${ex.seatNo} • Updated by: ${ex.updatedBy || 'Faculty'}`,
+          status: 'Scheduled',
+        }));
+        combined = [...liveExams, ...combined];
+      }
+
+      if (asgRes?.success && asgRes?.assignments) {
+        const liveAsgs = asgRes.assignments.map(a => ({
+          id: `asg-live-${a.id}`,
+          date: a.dueDate,
+          time: '11:59 PM',
+          title: a.title,
+          type: 'Assignment',
+          category: 'Academic',
+          urgency: a.status === 'Submitted' ? 'Normal' : 'Urgent',
+          subject: a.subject,
+          description: a.instructions,
+          status: a.status,
+          score: a.score,
+          grade: a.grade,
+          feedback: a.feedback
+        }));
+        combined = [...liveAsgs, ...combined];
+      }
+
+      setItems(combined);
+    });
+  }, []);
+
+  const filteredItems = items.filter(item => {
     const matchesFilter = filterType === 'All' || item.type === filterType;
-    const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          item.subject.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = (item.title || '').toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          (item.subject || '').toLowerCase().includes(searchQuery.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 
@@ -57,6 +113,37 @@ export default function TimelineModule({ setActiveTab }) {
           ))}
         </div>
       </div>
+
+      {/* Today's Live Class Timetable (Updated by Faculty) */}
+      {todayLectures.length > 0 && (
+        <div className="bg-gradient-to-r from-blue-900 to-indigo-900 text-white rounded-2xl p-4 shadow-sm space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <UserCheck className="w-5 h-5 text-emerald-400" />
+              <h2 className="text-sm font-bold tracking-tight">Today's Class Timetable (Updated by Faculty)</h2>
+            </div>
+            <span className="text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-0.5 rounded-full">
+              {todayLectures.length} Lectures Scheduled
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
+            {todayLectures.map((lec) => (
+              <div key={lec.id} className="bg-white/10 backdrop-blur-xs rounded-xl p-3 border border-white/15 text-xs space-y-1">
+                <div className="flex items-center justify-between text-[11px] font-bold text-blue-200">
+                  <span>{lec.subjectCode}</span>
+                  <span className="bg-white/20 text-white px-2 py-0.5 rounded-md">{lec.time}</span>
+                </div>
+                <h3 className="font-bold text-white text-xs">{lec.subjectName}</h3>
+                <div className="flex items-center justify-between text-[11px] text-slate-300 pt-1 border-t border-white/10">
+                  <span>Room: <strong>{lec.room}</strong></span>
+                  <span className="text-emerald-300 font-semibold">{lec.status}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Timeline Stream */}
       <div className="relative pl-6 space-y-3 before:absolute before:left-3 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
