@@ -291,7 +291,7 @@ export default function FacultyDashboard({ user, setActiveTab, onOpenGradeModal,
           <span className="text-xs text-slate-500 font-medium">Click any module to launch task workspace</span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {facultyModules.map((mod) => {
             const IconComponent = mod.icon;
             return (
