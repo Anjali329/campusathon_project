@@ -148,13 +148,20 @@ export default function FacultyDashboard({ user, setActiveTab, onOpenGradeModal,
     setTimeout(() => setToastMessage(null), 4000);
   };
 
-  const completedCount = schedule.filter(s => s.markedAttendance).length;
-  const totalCount = schedule.length;
+  const safeSchedule = Array.isArray(schedule) ? schedule : [];
+  const safeDefaulters = Array.isArray(defaulters) ? defaulters : [];
+  const safeEvaluations = Array.isArray(evaluations) ? evaluations : [];
+
+  const completedCount = safeSchedule.filter(s => s && s.markedAttendance).length;
+  const totalCount = safeSchedule.length;
   const facultyName = user?.name || "Prof. Ananya Sen";
 
-  const filteredDefaulters = defaulters.filter(st => 
-    selectedDefaulterSubject === 'All' || st.courseCode.includes(selectedDefaulterSubject)
-  );
+  const filteredDefaulters = safeDefaulters.filter(st => {
+    if (!st) return false;
+    if (selectedDefaulterSubject === 'All') return true;
+    const code = st.courseCode || st.subject || st.code || '';
+    return code.toLowerCase().includes(selectedDefaulterSubject.toLowerCase());
+  });
 
   const facultyModules = [
     {
@@ -174,7 +181,7 @@ export default function FacultyDashboard({ user, setActiveTab, onOpenGradeModal,
       icon: FileText,
       iconBg: 'bg-blue-500',
       iconColor: 'text-white',
-      badge: `${evaluations.length} Solution Files`,
+      badge: `${safeEvaluations.length} Solution Files`,
       badgeColor: 'bg-blue-100 text-blue-800 border-blue-200 font-bold',
     },
     {
@@ -377,52 +384,58 @@ export default function FacultyDashboard({ user, setActiveTab, onOpenGradeModal,
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {schedule.map((lec) => (
-            <div key={lec.id} className="p-4 rounded-2xl border border-slate-200 hover:border-blue-300 bg-slate-50/50 hover:bg-white transition space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 bg-blue-100 px-2.5 py-0.5 rounded-md">
-                  {lec.subjectCode}
-                </span>
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
-                  lec.markedAttendance ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
-                }`}>
-                  {lec.markedAttendance ? '✓ Attendance Logged' : 'Pending Attendance'}
-                </span>
-              </div>
-
-              <div>
-                <h3 className="text-sm font-bold text-slate-900">{lec.subjectName}</h3>
-                <p className="text-xs text-slate-500 mt-0.5">{lec.batch}</p>
-              </div>
-
-              <div className="space-y-1.5 text-xs text-slate-600 pt-1 border-t border-slate-200/60">
-                <div className="flex items-center space-x-2">
-                  <Clock className="w-3.5 h-3.5 text-slate-400" />
-                  <span className="font-semibold">{lec.time}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                  <span>{lec.room}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Users className="w-3.5 h-3.5 text-slate-400" />
-                  <span>{lec.totalStudents} Enrolled Students</span>
-                </div>
-              </div>
-
-              <button 
-                onClick={() => handleMarkAttendanceClick(lec)}
-                className={`w-full text-xs font-bold py-2 rounded-xl border transition flex items-center justify-center space-x-1.5 ${
-                  lec.markedAttendance 
-                    ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300'
-                    : 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600 shadow-2xs'
-                }`}
-              >
-                <UserCheck className="w-3.5 h-3.5" />
-                <span>{lec.markedAttendance ? 'Edit Class Attendance' : 'Mark Attendance Now'}</span>
-              </button>
+          {safeSchedule.length === 0 ? (
+            <div className="col-span-3 py-6 text-center text-xs text-slate-400 font-medium bg-slate-50 rounded-2xl">
+              No lecture classes scheduled for today.
             </div>
-          ))}
+          ) : (
+            safeSchedule.map((lec) => (
+              <div key={lec.id} className="p-4 rounded-2xl border border-slate-200 hover:border-blue-300 bg-slate-50/50 hover:bg-white transition space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 bg-blue-100 px-2.5 py-0.5 rounded-md">
+                    {lec.subjectCode}
+                  </span>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
+                    lec.markedAttendance ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                  }`}>
+                    {lec.markedAttendance ? '✓ Attendance Logged' : 'Pending Attendance'}
+                  </span>
+                </div>
+
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">{lec.subjectName}</h3>
+                  <p className="text-xs text-slate-500 mt-0.5">{lec.batch}</p>
+                </div>
+
+                <div className="space-y-1.5 text-xs text-slate-600 pt-1 border-t border-slate-200/60">
+                  <div className="flex items-center space-x-2">
+                    <Clock className="w-3.5 h-3.5 text-slate-400" />
+                    <span className="font-semibold">{lec.time}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                    <span>{lec.room}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Users className="w-3.5 h-3.5 text-slate-400" />
+                    <span>{lec.totalStudents} Enrolled Students</span>
+                  </div>
+                </div>
+
+                <button 
+                  onClick={() => handleMarkAttendanceClick(lec)}
+                  className={`w-full text-xs font-bold py-2 rounded-xl border transition flex items-center justify-center space-x-1.5 ${
+                    lec.markedAttendance 
+                      ? 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300'
+                      : 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600 shadow-2xs'
+                  }`}
+                >
+                  <UserCheck className="w-3.5 h-3.5" />
+                  <span>{lec.markedAttendance ? 'Edit Class Attendance' : 'Mark Attendance Now'}</span>
+                </button>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
@@ -534,36 +547,42 @@ export default function FacultyDashboard({ user, setActiveTab, onOpenGradeModal,
             </div>
 
             <div className="space-y-3">
-              {evaluations.map((sub) => (
-                <div key={sub.id} className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
-                  <div>
-                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">
-                      {sub.subject}
-                    </span>
-                    <h4 className="font-bold text-slate-900 text-xs mt-1">{sub.assignmentTitle}</h4>
-                    <p className="text-[11px] text-slate-600 mt-0.5">
-                      Student: <strong>{sub.studentName}</strong> ({sub.studentRoll})
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col items-end space-y-1.5">
-                    <span className="text-[10px] text-slate-400">{sub.submittedAt}</span>
-                    <button 
-                      onClick={() => setSelectedSubForGrade(sub)}
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition flex items-center space-x-1 shadow-2xs"
-                    >
-                      <Award className="w-3.5 h-3.5" />
-                      <span>Verify & Grade</span>
-                    </button>
-                  </div>
+              {safeEvaluations.length === 0 ? (
+                <div className="py-6 text-center text-xs text-slate-400 font-medium bg-slate-50 rounded-2xl">
+                  No pending student solutions in evaluation queue.
                 </div>
-              ))}
+              ) : (
+                safeEvaluations.map((sub) => (
+                  <div key={sub.id} className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
+                    <div>
+                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">
+                        {sub.subject}
+                      </span>
+                      <h4 className="font-bold text-slate-900 text-xs mt-1">{sub.assignmentTitle}</h4>
+                      <p className="text-[11px] text-slate-600 mt-0.5">
+                        Student: <strong>{sub.studentName}</strong> ({sub.studentRoll})
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col items-end space-y-1.5">
+                      <span className="text-[10px] text-slate-400">{sub.submittedAt}</span>
+                      <button 
+                        onClick={() => setSelectedSubForGrade(sub)}
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition flex items-center space-x-1 shadow-2xs"
+                      >
+                        <Award className="w-3.5 h-3.5" />
+                        <span>Verify & Grade</span>
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
           <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
             <span>Pending Evaluation Queue</span>
-            <span className="font-bold text-emerald-600">{evaluations.length} Solution Files</span>
+            <span className="font-bold text-emerald-600">{safeEvaluations.length} Solution Files</span>
           </div>
         </div>
 
