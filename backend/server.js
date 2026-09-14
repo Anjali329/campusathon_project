@@ -13,6 +13,7 @@ import eventsRoutes from './routes/events.routes.js';
 import portfolioRoutes from './routes/portfolio.routes.js';
 import timelineRoutes from './routes/timeline.routes.js';
 import facultyRoutes from './routes/faculty.routes.js';
+import adminRoutes from './routes/admin.routes.js';
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ app.use('/api/events', eventsRoutes);
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/timeline', timelineRoutes);
 app.use('/api/faculty', facultyRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Server Root & Health Check Endpoint
 app.get('/', (req, res) => {

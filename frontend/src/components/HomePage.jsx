@@ -17,8 +17,9 @@ import {
 } from 'lucide-react';
 import { currentUser } from '../data/mockData';
 import FacultyDashboard from './FacultyDashboard';
+import AdminDashboard from './AdminDashboard';
 
-export default function HomePage({ activeRole, user, setActiveTab, onOpenCorrectionModal }) {
+export default function HomePage({ activeRole, user, setActiveTab, onOpenCorrectionModal, onOpenPublishNoticeModal }) {
   const [searchQuery, setSearchQuery] = useState('');
 
   if (activeRole === 'faculty') {
@@ -26,6 +27,17 @@ export default function HomePage({ activeRole, user, setActiveTab, onOpenCorrect
       <FacultyDashboard 
         user={user}
         setActiveTab={setActiveTab}
+        onOpenPublishNoticeModal={onOpenPublishNoticeModal}
+      />
+    );
+  }
+
+  if (activeRole === 'admin') {
+    return (
+      <AdminDashboard 
+        user={user}
+        setActiveTab={setActiveTab}
+        onOpenPublishNoticeModal={onOpenPublishNoticeModal}
       />
     );
   }

@@ -100,6 +100,30 @@ export const api = {
     return res.json();
   },
 
+  // Admin Specific APIs
+  getAdminFaculties: async () => {
+    const res = await fetch(`${API_BASE_URL}/admin/faculties`, {
+      headers: getHeaders(),
+    });
+    return res.json();
+  },
+
+  assignFaculty: async (facultyData) => {
+    const res = await fetch(`${API_BASE_URL}/admin/assign-faculty`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(facultyData),
+    });
+    return res.json();
+  },
+
+  getDailyClassUpdates: async () => {
+    const res = await fetch(`${API_BASE_URL}/admin/daily-class-updates`, {
+      headers: getHeaders(),
+    });
+    return res.json();
+  },
+
   // Priority Actions
   getPriorityActions: async () => {
     const res = await fetch(`${API_BASE_URL}/priority/actions`, {

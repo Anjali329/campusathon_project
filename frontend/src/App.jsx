@@ -112,6 +112,7 @@ export default function App() {
               user={user}
               setActiveTab={setActiveTab} 
               onOpenCorrectionModal={() => setIsCorrectionOpen(true)}
+              onOpenPublishNoticeModal={() => setIsPublishNoticeOpen(true)}
             />
           )}
 
