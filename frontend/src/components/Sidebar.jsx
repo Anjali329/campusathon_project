@@ -72,6 +72,13 @@ export default function Sidebar({ activeTab, setActiveTab, activeRole }) {
     },
   ];
 
+  const visibleNavItems = navItems.filter(item => {
+    if (activeRole === 'faculty') {
+      if (item.id === 'timeline' || item.id === 'portfolio') return false;
+    }
+    return true;
+  });
+
   return (
     <aside className="w-full lg:w-64 bg-white border-r border-slate-200 shrink-0 min-h-[calc(100vh-4rem)] p-4 flex flex-col justify-between">
       <div>
@@ -84,7 +91,7 @@ export default function Sidebar({ activeTab, setActiveTab, activeRole }) {
 
         {/* Navigation Items */}
         <nav className="space-y-1">
-          {navItems.map((item) => {
+          {visibleNavItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
             return (
