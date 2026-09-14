@@ -45,6 +45,7 @@ export default function AuthPage({ onLoginSuccess, setActiveRole }) {
       role: effectiveRole,
     };
 
+    localStorage.setItem('campusflow_token', `demo-token-${effectiveRole}`);
     onLoginSuccess(userProfile);
   };
 
@@ -59,6 +60,7 @@ export default function AuthPage({ onLoginSuccess, setActiveRole }) {
       setIsGoogleLoading(false);
       setShowGoogleModal(false);
       setActiveRole(targetRole);
+      localStorage.setItem('campusflow_token', `demo-token-${targetRole}`);
       onLoginSuccess({
         ...baseProfile,
         name: selectedAccount.name,
