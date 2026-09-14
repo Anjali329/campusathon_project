@@ -37,6 +37,9 @@ export default function FacultyDashboard({ user, setActiveTab, onOpenGradeModal,
 
   const [toastMessage, setToastMessage] = useState(null);
 
+  // Defaulter subject filter state
+  const [selectedDefaulterSubject, setSelectedDefaulterSubject] = useState('All');
+
   // Modals inside FacultyDashboard
   const [isCreateAssignmentOpen, setIsCreateAssignmentOpen] = useState(false);
   const [selectedSubForGrade, setSelectedSubForGrade] = useState(null);
@@ -149,6 +152,93 @@ export default function FacultyDashboard({ user, setActiveTab, onOpenGradeModal,
   const totalCount = schedule.length;
   const facultyName = user?.name || "Prof. Ananya Sen";
 
+  const filteredDefaulters = defaulters.filter(st => 
+    selectedDefaulterSubject === 'All' || st.courseCode.includes(selectedDefaulterSubject)
+  );
+
+  const facultyModules = [
+    {
+      id: 'attendance',
+      title: "Today's Schedule & Attendance",
+      sub: `${totalCount} Classes Scheduled Today • LT-3, LT-2, Lab 4`,
+      icon: UserCheck,
+      iconBg: 'bg-emerald-500',
+      iconColor: 'text-white',
+      badge: `${totalCount} Classes Today`,
+      badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-200 font-bold',
+    },
+    {
+      id: 'assignments',
+      title: 'Assignments & Marking Queue',
+      sub: 'Publish Tasks & Evaluate Student Solution Uploads',
+      icon: FileText,
+      iconBg: 'bg-blue-500',
+      iconColor: 'text-white',
+      badge: `${evaluations.length} Solution Files`,
+      badgeColor: 'bg-blue-100 text-blue-800 border-blue-200 font-bold',
+    },
+    {
+      id: 'exams',
+      title: 'Examination & Timetables',
+      sub: 'Upload Exam Schedules, Room Venues & Seat Allocations',
+      icon: BookOpen,
+      iconBg: 'bg-indigo-500',
+      iconColor: 'text-white',
+      badge: 'Timetable Control',
+      badgeColor: 'bg-indigo-100 text-indigo-800 border-indigo-200 font-bold',
+    },
+    {
+      id: 'notices',
+      title: 'Department Notices & Warning Alerts',
+      sub: 'Post Smart NLP Notices & Issue Attendance Shortage Warnings',
+      icon: Bell,
+      iconBg: 'bg-purple-500',
+      iconColor: 'text-white',
+      badge: 'Broadcast Notice',
+      badgeColor: 'bg-purple-100 text-purple-800 border-purple-200 font-bold',
+    },
+    {
+      id: 'dashboard',
+      title: 'Smart Command Center',
+      sub: 'AI Priority Engine & Department Workload Analytics',
+      icon: Zap,
+      iconBg: 'bg-amber-500',
+      iconColor: 'text-white',
+      badge: 'AI Priority Engine',
+      badgeColor: 'bg-amber-100 text-amber-900 border-amber-200 font-bold',
+    },
+    {
+      id: 'timeline',
+      title: 'Academic Stream & Time Table',
+      sub: 'Unified Department Teaching Timeline & Schedule Stream',
+      icon: Clock,
+      iconBg: 'bg-blue-600',
+      iconColor: 'text-white',
+      badge: 'Live Schedule',
+      badgeColor: 'bg-blue-50 text-blue-700 border-blue-200 font-bold',
+    },
+    {
+      id: 'events',
+      title: 'Campus Events & Workshops',
+      sub: 'Department Hackathons, Guest Lectures & RSVPs',
+      icon: Calendar,
+      iconBg: 'bg-rose-500',
+      iconColor: 'text-white',
+      badge: 'Campus Events',
+      badgeColor: 'bg-rose-100 text-rose-800 border-rose-200 font-bold',
+    },
+    {
+      id: 'portfolio',
+      title: 'Student Portfolios & Verification',
+      sub: 'Review Student Achievements, Projects & Verified Records',
+      icon: Award,
+      iconBg: 'bg-cyan-500',
+      iconColor: 'text-white',
+      badge: 'ERP Verification',
+      badgeColor: 'bg-cyan-100 text-cyan-800 border-cyan-200 font-bold',
+    },
+  ];
+
   return (
     <div className="space-y-6">
       
@@ -199,6 +289,57 @@ export default function FacultyDashboard({ user, setActiveTab, onOpenGradeModal,
               <span>Upload Exam Schedule</span>
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* FACULTY INTERACTIVE CLICKABLE MODULES GRID (HOME PAGE STYLE) */}
+      <div>
+        <div className="flex items-center justify-between mb-3 px-1">
+          <div className="flex items-center space-x-2">
+            <Sparkles className="w-4 h-4 text-indigo-600" />
+            <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Faculty Portal Modules</h2>
+          </div>
+          <span className="text-xs text-slate-500 font-medium">Click any module to launch task workspace</span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {facultyModules.map((mod) => {
+            const IconComponent = mod.icon;
+            return (
+              <div 
+                key={mod.id}
+                onClick={() => setActiveTab(mod.id)}
+                className="bg-white rounded-2xl p-5 border border-slate-200 shadow-2xs hover:shadow-md hover:border-blue-300 transition cursor-pointer flex flex-col justify-between group"
+              >
+                <div>
+                  <div className="flex items-start justify-between mb-3">
+                    <div className={`p-3 rounded-xl ${mod.iconBg} ${mod.iconColor} shadow-xs group-hover:scale-105 transition-transform`}>
+                      <IconComponent className="w-5 h-5" />
+                    </div>
+                    {mod.badge && (
+                      <span className={`text-[10px] px-2.5 py-0.5 rounded-full border ${mod.badgeColor}`}>
+                        {mod.badge}
+                      </span>
+                    )}
+                  </div>
+
+                  <h3 className="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition">
+                    {mod.title}
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                    {mod.sub}
+                  </p>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-[11px] font-bold text-blue-600 flex items-center space-x-1 group-hover:translate-x-1 transition-transform">
+                    <span>Open Module</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </span>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -291,62 +432,81 @@ export default function FacultyDashboard({ user, setActiveTab, onOpenGradeModal,
         {/* DEFAULTER LIST (<75% ATTENDANCE THRESHOLD) */}
         <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-2xs flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
               <div className="flex items-center space-x-2">
                 <div className="p-2 bg-red-50 text-red-600 rounded-xl">
                   <AlertTriangle className="w-5 h-5" />
                 </div>
                 <div>
                   <h2 className="text-base font-bold text-slate-900">Attendance Defaulter List (&lt;75%)</h2>
-                  <p className="text-xs text-slate-500">Students with critical attendance shortfall under your subjects</p>
+                  <p className="text-xs text-slate-500">Students with critical attendance shortfall by subject</p>
                 </div>
               </div>
 
-              <button 
-                onClick={() => setActiveTab('attendance')}
-                className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center space-x-1"
-              >
-                <span>Full List</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
+              <div className="flex items-center space-x-2">
+                <select 
+                  value={selectedDefaulterSubject}
+                  onChange={(e) => setSelectedDefaulterSubject(e.target.value)}
+                  className="bg-slate-50 border border-slate-200 text-xs font-bold text-slate-700 px-2.5 py-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                >
+                  <option value="All">All Subjects</option>
+                  <option value="CS601">CS601 OS</option>
+                  <option value="CS604">CS604 ML</option>
+                  <option value="CS604L">CS604L Lab</option>
+                </select>
+
+                <button 
+                  onClick={() => setActiveTab('attendance')}
+                  className="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center space-x-1"
+                >
+                  <span>Full List</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
 
             <div className="divide-y divide-slate-100">
-              {defaulters.map((st) => (
-                <div key={st.id} className="py-3 flex items-center justify-between text-xs">
-                  <div>
-                    <div className="flex items-center space-x-2">
-                      <span className="font-bold text-slate-900">{st.name}</span>
-                      <span className="text-[10px] text-slate-400 font-mono">({st.roll})</span>
-                    </div>
-                    <p className="text-[11px] text-slate-500 mt-0.5">
-                      Course: <strong>{st.courseCode}</strong> • Attended: {st.attended}/{st.total} classes
-                    </p>
-                  </div>
-
-                  <div className="flex items-center space-x-3">
-                    <div className="text-right">
-                      <span className="font-bold text-red-600 text-sm block">{st.percentage}%</span>
-                      <span className="text-[9px] font-bold text-red-700 bg-red-100 px-1.5 py-0.5 rounded">Critical Risk</span>
-                    </div>
-
-                    <button 
-                      onClick={() => handleIssueWarning(st)}
-                      title="Dispatch warning notice to student"
-                      className="p-1.5 text-amber-700 hover:text-amber-900 bg-amber-50 hover:bg-amber-100 rounded-lg border border-amber-200 transition flex items-center space-x-1 text-[11px] font-bold"
-                    >
-                      <Bell className="w-3.5 h-3.5" />
-                      <span className="hidden sm:inline">Warn</span>
-                    </button>
-                  </div>
+              {filteredDefaulters.length === 0 ? (
+                <div className="py-6 text-center text-xs text-slate-400 font-medium">
+                  No defaulters found under selected subject.
                 </div>
-              ))}
+              ) : (
+                filteredDefaulters.map((st) => (
+                  <div key={st.id} className="py-3 flex items-center justify-between text-xs">
+                    <div>
+                      <div className="flex items-center space-x-2">
+                        <span className="font-bold text-slate-900">{st.name}</span>
+                        <span className="text-[10px] text-slate-400 font-mono">({st.roll})</span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 mt-0.5">
+                        Course: <strong>{st.courseCode}</strong> • Attended: {st.attended}/{st.total} classes
+                      </p>
+                    </div>
+
+                    <div className="flex items-center space-x-3">
+                      <div className="text-right">
+                        <span className="font-bold text-red-600 text-sm block">{st.percentage}%</span>
+                        <span className="text-[9px] font-bold text-red-700 bg-red-100 px-1.5 py-0.5 rounded">Critical Risk</span>
+                      </div>
+
+                      <button 
+                        onClick={() => handleIssueWarning(st)}
+                        title="Dispatch warning notice to student"
+                        className="p-1.5 text-amber-700 hover:text-amber-900 bg-amber-50 hover:bg-amber-100 rounded-lg border border-amber-200 transition flex items-center space-x-1 text-[11px] font-bold"
+                      >
+                        <Bell className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline">Warn</span>
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
           <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
             <span>Minimum Exam Requirement: <strong>75.0%</strong></span>
-            <span className="text-red-600 font-bold">{defaulters.length} Students At Risk</span>
+            <span className="text-red-600 font-bold">{filteredDefaulters.length} Students At Risk</span>
           </div>
         </div>
 
