@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { X, Sparkles, CheckCircle2 } from 'lucide-react';
+import { api } from '../../services/api';
 
-export default function PublishNoticeModal({ isOpen, onClose }) {
+export default function PublishNoticeModal({ isOpen, onClose, onNoticePublished }) {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('Academic');
   const [content, setContent] = useState('');
@@ -9,11 +10,21 @@ export default function PublishNoticeModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      const res = await api.publishNotice({ title, category, content });
+      if (res.success && onNoticePublished) {
+        onNoticePublished(res.notice);
+      }
+    } catch (err) {
+      console.error('Failed to publish notice:', err);
+    }
     setIsPublished(true);
     setTimeout(() => {
       setIsPublished(false);
+      setTitle('');
+      setContent('');
       onClose();
     }, 1500);
   };

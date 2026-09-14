@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   BellRing, 
   Search, 
@@ -7,11 +7,20 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { smartNotices } from '../data/mockData';
+import { api } from '../services/api';
 
 export default function NoticesModule({ activeRole, onOpenNoticeModal, onOpenPublishNoticeModal }) {
   const [notices, setNotices] = useState(smartNotices);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    api.getNotices().then(res => {
+      if (res.success && res.notices) {
+        setNotices(res.notices);
+      }
+    }).catch(() => {});
+  }, []);
 
   const filteredNotices = notices.filter(n => {
     const matchesCat = selectedCategory === 'All' || n.category === selectedCategory;
@@ -30,7 +39,7 @@ export default function NoticesModule({ activeRole, onOpenNoticeModal, onOpenPub
           <p className="text-slate-500 text-xs">Categorized institutional announcements with NLP urgency tags.</p>
         </div>
 
-        {activeRole === 'admin' ? (
+        {(activeRole === 'admin' || activeRole === 'faculty') ? (
           <button 
             onClick={onOpenPublishNoticeModal}
             className="flex items-center justify-center space-x-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition"

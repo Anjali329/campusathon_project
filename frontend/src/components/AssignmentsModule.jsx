@@ -119,6 +119,12 @@ export default function AssignmentsModule({ activeRole, onOpenSubmissionModal })
   const [toastMessage, setToastMessage] = useState(null);
 
   useEffect(() => {
+    api.getAssignments().then(res => {
+      if (res.success && res.assignments) {
+        setList(res.assignments);
+      }
+    }).catch(() => {});
+
     api.getAllStudentSubmissions().then(res => {
       if (res.success && res.submissions) {
         setSubmissionsArchive(res.submissions);
@@ -137,7 +143,7 @@ export default function AssignmentsModule({ activeRole, onOpenSubmissionModal })
     return matchesSearch && matchesSubject;
   });
 
-  const handleCreateAssignment = (e) => {
+  const handleCreateAssignment = async (e) => {
     e.preventDefault();
     const created = {
       id: `asg-${Date.now()}`,
@@ -151,8 +157,16 @@ export default function AssignmentsModule({ activeRole, onOpenSubmissionModal })
       instructions: newInstructions || 'Complete the assignment according to specified guidelines.',
     };
 
-    api.publishExamSlot(created).catch(() => {});
-    setList([created, ...list]);
+    try {
+      const res = await api.createAssignment(created);
+      if (res.success && res.assignment) {
+        setList([res.assignment, ...list]);
+      } else {
+        setList([created, ...list]);
+      }
+    } catch {
+      setList([created, ...list]);
+    }
     setIsCreateOpen(false);
     setToastMessage(`Assignment '${created.title}' published to student dashboard!`);
     setTimeout(() => setToastMessage(null), 4000);

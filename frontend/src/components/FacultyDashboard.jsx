@@ -108,7 +108,7 @@ export default function FacultyDashboard({ user, setActiveTab, onOpenGradeModal,
       instructions: newInstructions || 'Complete according to guidelines.',
     };
 
-    api.publishExamSlot(created).catch(() => {});
+    api.createAssignment(created).catch(() => {});
     setIsCreateAssignmentOpen(false);
     setToastMessage(`Assignment '${created.title}' published successfully to student portal!`);
     setTimeout(() => setToastMessage(null), 4000);

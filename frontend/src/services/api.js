@@ -151,6 +151,15 @@ export const api = {
     return res.json();
   },
 
+  createAssignment: async (asgData) => {
+    const res = await fetch(`${API_BASE_URL}/assignments/create`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(asgData),
+    });
+    return res.json();
+  },
+
   getExamsTimetable: async () => {
     const res = await fetch(`${API_BASE_URL}/exams/timetable`, {
       headers: getHeaders(),

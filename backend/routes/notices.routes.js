@@ -59,8 +59,8 @@ router.get('/', authenticateJWT, (req, res) => {
   res.json({ success: true, count: noticesData.length, notices: noticesData });
 });
 
-// POST /api/notices/publish - Admin Broadcast Notice Publisher (RBAC: admin)
-router.post('/publish', authenticateJWT, requireRole(['admin']), (req, res) => {
+// POST /api/notices/publish - Broadcast Notice Publisher (RBAC: faculty, admin)
+router.post('/publish', authenticateJWT, requireRole(['faculty', 'admin']), (req, res) => {
   const { title, category, content } = req.body;
   if (!title || !content) {
     return res.status(400).json({ success: false, message: 'Title and content are required.' });
