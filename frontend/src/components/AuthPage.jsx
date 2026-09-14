@@ -23,10 +23,18 @@ export default function AuthPage({ onLoginSuccess, setActiveRole }) {
 
   const handleEmailAuth = (e) => {
     e.preventDefault();
-    setActiveRole(role);
+    let effectiveRole = role;
+    const lowerEmail = email.toLowerCase();
+    if (lowerEmail.includes('faculty') || lowerEmail.includes('prof') || lowerEmail.includes('teacher') || lowerEmail.includes('ananya')) {
+      effectiveRole = 'faculty';
+    } else if (lowerEmail.includes('admin')) {
+      effectiveRole = 'admin';
+    }
+
+    setActiveRole(effectiveRole);
     let baseProfile = currentUser;
-    if (role === 'faculty') baseProfile = facultyUser;
-    if (role === 'admin') baseProfile = adminUser;
+    if (effectiveRole === 'faculty') baseProfile = facultyUser;
+    if (effectiveRole === 'admin') baseProfile = adminUser;
     
     const userProfile = {
       ...baseProfile,
@@ -34,7 +42,7 @@ export default function AuthPage({ onLoginSuccess, setActiveRole }) {
       email: email || baseProfile.email,
       rollNo: rollNo || baseProfile.rollNo || "21BCE1042",
       rollNumber: rollNo || baseProfile.rollNo || "21BCE1042",
-      role: role,
+      role: effectiveRole,
     };
 
     onLoginSuccess(userProfile);
@@ -42,17 +50,23 @@ export default function AuthPage({ onLoginSuccess, setActiveRole }) {
 
   const handleGoogleSignIn = (selectedAccount) => {
     setIsGoogleLoading(true);
+    const targetRole = selectedAccount.role || (role === 'faculty' ? 'faculty' : 'student');
+    let baseProfile = currentUser;
+    if (targetRole === 'faculty') baseProfile = facultyUser;
+    if (targetRole === 'admin') baseProfile = adminUser;
+
     setTimeout(() => {
       setIsGoogleLoading(false);
       setShowGoogleModal(false);
-      setActiveRole('student');
+      setActiveRole(targetRole);
       onLoginSuccess({
-        ...currentUser,
+        ...baseProfile,
         name: selectedAccount.name,
         email: selectedAccount.email,
         rollNo: "21BCE1042",
         rollNumber: "21BCE1042",
         avatar: selectedAccount.picture,
+        role: targetRole,
       });
     }, 1000);
   };
@@ -275,7 +289,8 @@ export default function AuthPage({ onLoginSuccess, setActiveRole }) {
                 onClick={() => handleGoogleSignIn({
                   name: "Rahul Sharma",
                   email: "rahul.sharma@campus.edu",
-                  picture: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250"
+                  picture: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250",
+                  role: "student"
                 })}
                 className="w-full flex items-center space-x-3 p-3 bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 rounded-xl transition text-left"
               >
@@ -285,8 +300,11 @@ export default function AuthPage({ onLoginSuccess, setActiveRole }) {
                   className="w-9 h-9 rounded-full object-cover"
                 />
                 <div>
-                  <span className="font-bold text-xs text-slate-900 block">Rahul Sharma</span>
-                  <span className="text-[11px] text-slate-500">rahul.sharma@campus.edu</span>
+                  <div className="flex items-center space-x-1.5">
+                    <span className="font-bold text-xs text-slate-900">Rahul Sharma</span>
+                    <span className="bg-blue-100 text-blue-700 text-[9px] font-bold px-1.5 py-0.2 rounded">Student</span>
+                  </div>
+                  <span className="text-[11px] text-slate-500 block">rahul.sharma@campus.edu</span>
                 </div>
               </button>
 
@@ -295,7 +313,8 @@ export default function AuthPage({ onLoginSuccess, setActiveRole }) {
                 onClick={() => handleGoogleSignIn({
                   name: "Anjali Kharade",
                   email: "anjali.kharade@campus.edu",
-                  picture: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=250"
+                  picture: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=250",
+                  role: "student"
                 })}
                 className="w-full flex items-center space-x-3 p-3 bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 rounded-xl transition text-left"
               >
@@ -305,8 +324,35 @@ export default function AuthPage({ onLoginSuccess, setActiveRole }) {
                   className="w-9 h-9 rounded-full object-cover"
                 />
                 <div>
-                  <span className="font-bold text-xs text-slate-900 block">Anjali Kharade</span>
-                  <span className="text-[11px] text-slate-500">anjali.kharade@campus.edu</span>
+                  <div className="flex items-center space-x-1.5">
+                    <span className="font-bold text-xs text-slate-900">Anjali Kharade</span>
+                    <span className="bg-blue-100 text-blue-700 text-[9px] font-bold px-1.5 py-0.2 rounded">Student</span>
+                  </div>
+                  <span className="text-[11px] text-slate-500 block">anjali.kharade@campus.edu</span>
+                </div>
+              </button>
+
+              <button 
+                disabled={isGoogleLoading}
+                onClick={() => handleGoogleSignIn({
+                  name: "Prof. Ananya Sen",
+                  email: "ananya.sen@campus.edu",
+                  picture: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=250",
+                  role: "faculty"
+                })}
+                className="w-full flex items-center space-x-3 p-3 bg-emerald-50/70 hover:bg-emerald-100/80 border border-emerald-200 hover:border-emerald-400 rounded-xl transition text-left"
+              >
+                <img 
+                  src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=250" 
+                  alt="Prof. Ananya Sen" 
+                  className="w-9 h-9 rounded-full object-cover ring-2 ring-emerald-500/50"
+                />
+                <div>
+                  <div className="flex items-center space-x-1.5">
+                    <span className="font-bold text-xs text-slate-900">Prof. Ananya Sen</span>
+                    <span className="bg-emerald-100 text-emerald-800 text-[9px] font-bold px-1.5 py-0.2 rounded border border-emerald-300">Faculty</span>
+                  </div>
+                  <span className="text-[11px] text-slate-600 block">ananya.sen@campus.edu</span>
                 </div>
               </button>
             </div>
