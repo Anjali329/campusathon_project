@@ -16,6 +16,9 @@ import {
   FileText,
   ChevronRight,
   UserCheck,
+  GraduationCap,
+  Layers,
+  Filter,
   X
 } from 'lucide-react';
 import { api } from '../services/api';
@@ -123,6 +126,160 @@ export default function AdminDashboard({ user, setActiveTab, onOpenPublishNotice
     },
   ]);
 
+  // Year-wise and Division-wise HOD Department Reports State
+  const [departmentReports, setDepartmentReports] = useState([
+    // 2nd Year
+    {
+      id: "rep-2a",
+      year: "2nd Year",
+      semester: "4th Semester",
+      division: "Division A",
+      batchName: "B.Tech CSE 2nd Year (Sec A)",
+      totalEnrolled: 64,
+      totalPresent: 55,
+      totalAbsent: 9,
+      attendancePercentage: 85.9,
+      shortageRiskCount: 2,
+      facultyInCharge: "Dr. A. K. Verma",
+      subjects: [
+        { code: "CS401", name: "Discrete Mathematics", faculty: "Dr. A. K. Verma", present: 55, total: 64, percentage: 85.9 },
+        { code: "CS403", name: "OOP Java", faculty: "Prof. S. K. Roy", present: 52, total: 64, percentage: 81.3 }
+      ]
+    },
+    {
+      id: "rep-2b",
+      year: "2nd Year",
+      semester: "4th Semester",
+      division: "Division B",
+      batchName: "B.Tech CSE 2nd Year (Sec B)",
+      totalEnrolled: 62,
+      totalPresent: 49,
+      totalAbsent: 13,
+      attendancePercentage: 79.0,
+      shortageRiskCount: 5,
+      facultyInCharge: "Prof. Neha Gupta",
+      subjects: [
+        { code: "CS402", name: "Microprocessors & Interfacing", faculty: "Prof. Neha Gupta", present: 49, total: 62, percentage: 79.0 }
+      ]
+    },
+    {
+      id: "rep-2c",
+      year: "2nd Year",
+      semester: "4th Semester",
+      division: "Division C",
+      batchName: "B.Tech CSE 2nd Year (Sec C)",
+      totalEnrolled: 60,
+      totalPresent: 48,
+      totalAbsent: 12,
+      attendancePercentage: 80.0,
+      shortageRiskCount: 3,
+      facultyInCharge: "Prof. S. K. Roy",
+      subjects: [
+        { code: "CS404L", name: "Java OOP Lab", faculty: "Prof. S. K. Roy", present: 48, total: 60, percentage: 80.0 }
+      ]
+    },
+    // 3rd Year
+    {
+      id: "rep-3a",
+      year: "3rd Year",
+      semester: "6th Semester",
+      division: "Division A",
+      batchName: "B.Tech CSE 3rd Year (Sec A)",
+      totalEnrolled: 60,
+      totalPresent: 47,
+      totalAbsent: 13,
+      attendancePercentage: 78.3,
+      shortageRiskCount: 4,
+      facultyInCharge: "Prof. Ananya Sen",
+      subjects: [
+        { code: "CS601", name: "Operating Systems", faculty: "Prof. Ananya Sen", present: 47, total: 60, percentage: 78.3 },
+        { code: "CS604", name: "Machine Learning", faculty: "Prof. Ananya Sen", present: 50, total: 58, percentage: 86.2 }
+      ]
+    },
+    {
+      id: "rep-3b",
+      year: "3rd Year",
+      semester: "6th Semester",
+      division: "Division B",
+      batchName: "B.Tech CSE 3rd Year (Sec B)",
+      totalEnrolled: 58,
+      totalPresent: 42,
+      totalAbsent: 16,
+      attendancePercentage: 72.4,
+      shortageRiskCount: 6,
+      facultyInCharge: "Dr. Vikram Sharma",
+      subjects: [
+        { code: "CS604L", name: "ML Lab (Sec B)", faculty: "Dr. Vikram Sharma", present: 22, total: 30, percentage: 73.3 },
+        { code: "CS602", name: "Computer Networks", faculty: "Dr. R. P. Gupta", present: 44, total: 55, percentage: 80.0 }
+      ]
+    },
+    {
+      id: "rep-3c",
+      year: "3rd Year",
+      semester: "6th Semester",
+      division: "Division C",
+      batchName: "B.Tech CSE 3rd Year (Sec C)",
+      totalEnrolled: 55,
+      totalPresent: 46,
+      totalAbsent: 9,
+      attendancePercentage: 83.6,
+      shortageRiskCount: 2,
+      facultyInCharge: "Dr. Sunita Rao",
+      subjects: [
+        { code: "CS603", name: "Design & Analysis of Algorithms", faculty: "Dr. Sunita Rao", present: 46, total: 55, percentage: 83.6 }
+      ]
+    },
+    // Final Year
+    {
+      id: "rep-4a",
+      year: "Final Year",
+      semester: "8th Semester",
+      division: "Division A",
+      batchName: "B.Tech CSE Final Year (Sec A)",
+      totalEnrolled: 50,
+      totalPresent: 45,
+      totalAbsent: 5,
+      attendancePercentage: 90.0,
+      shortageRiskCount: 1,
+      facultyInCharge: "Dr. R. P. Gupta (HOD)",
+      subjects: [
+        { code: "CS801", name: "Cloud Infrastructure & DevOps", faculty: "Dr. R. P. Gupta", present: 45, total: 50, percentage: 90.0 }
+      ]
+    },
+    {
+      id: "rep-4b",
+      year: "Final Year",
+      semester: "8th Semester",
+      division: "Division B",
+      batchName: "B.Tech CSE Final Year (Sec B)",
+      totalEnrolled: 48,
+      totalPresent: 43,
+      totalAbsent: 5,
+      attendancePercentage: 89.5,
+      shortageRiskCount: 1,
+      facultyInCharge: "Prof. Ananya Sen",
+      subjects: [
+        { code: "CS802", name: "Deep Learning & NLP", faculty: "Prof. Ananya Sen", present: 43, total: 48, percentage: 89.5 }
+      ]
+    },
+    {
+      id: "rep-4c",
+      year: "Final Year",
+      semester: "8th Semester",
+      division: "Division C",
+      batchName: "B.Tech CSE Final Year (Sec C)",
+      totalEnrolled: 46,
+      totalPresent: 40,
+      totalAbsent: 6,
+      attendancePercentage: 86.9,
+      shortageRiskCount: 2,
+      facultyInCharge: "Dr. Vikram Sharma",
+      subjects: [
+        { code: "CS803", name: "Cyber Security & Forensic Audit", faculty: "Dr. Vikram Sharma", present: 40, total: 46, percentage: 86.9 }
+      ]
+    }
+  ]);
+
   const [summaryStats, setSummaryStats] = useState({
     totalClassesConducted: 4,
     totalEnrolledSum: 203,
@@ -130,6 +287,9 @@ export default function AdminDashboard({ user, setActiveTab, onOpenPublishNotice
     overallCampusAttendance: 80.3,
   });
 
+  // HOD Filters
+  const [selectedYearFilter, setSelectedYearFilter] = useState('All'); // 'All', '2nd Year', '3rd Year', 'Final Year'
+  const [selectedDivisionFilter, setSelectedDivisionFilter] = useState('All'); // 'All', 'Division A', 'Division B', 'Division C'
   const [searchFaculty, setSearchFaculty] = useState('');
   const [toastMessage, setToastMessage] = useState(null);
 
@@ -154,6 +314,13 @@ export default function AdminDashboard({ user, setActiveTab, onOpenPublishNotice
       if (res.success && res.updates) {
         setDailyClassUpdates(res.updates);
         if (res.summary) setSummaryStats(res.summary);
+      }
+    }).catch(() => {});
+
+    // Fetch HOD Year-Wise & Division-Wise Department Reports
+    api.getDepartmentReports().then(res => {
+      if (res.success && res.reports) {
+        setDepartmentReports(res.reports);
       }
     }).catch(() => {});
   }, []);
@@ -205,7 +372,13 @@ export default function AdminDashboard({ user, setActiveTab, onOpenPublishNotice
     f.department.toLowerCase().includes(searchFaculty.toLowerCase())
   );
 
-  const adminName = user?.name || "Dr. S. K. Mukherjee (Academic Dean)";
+  const filteredReports = departmentReports.filter(rep => {
+    const matchesYear = selectedYearFilter === 'All' || rep.year === selectedYearFilter;
+    const matchesDivision = selectedDivisionFilter === 'All' || rep.division === selectedDivisionFilter;
+    return matchesYear && matchesDivision;
+  });
+
+  const adminName = user?.name || "Dr. R. P. Gupta (HOD & Academic Controller)";
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
@@ -221,7 +394,7 @@ export default function AdminDashboard({ user, setActiveTab, onOpenPublishNotice
         </div>
       )}
 
-      {/* ADMIN COMMAND CENTER HEADER BANNER */}
+      {/* HOD CONTROL CENTER HEADER BANNER */}
       <div className="bg-gradient-to-r from-slate-950 via-purple-950 to-slate-900 text-white rounded-3xl p-6 shadow-md relative overflow-hidden">
         <div className="absolute right-0 top-0 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"></div>
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -229,15 +402,15 @@ export default function AdminDashboard({ user, setActiveTab, onOpenPublishNotice
             <div className="flex items-center space-x-2 mb-2">
               <span className="bg-purple-500/20 text-purple-300 text-[10px] font-bold px-2.5 py-0.5 rounded-md border border-purple-500/30 flex items-center space-x-1">
                 <ShieldCheck className="w-3.5 h-3.5" />
-                <span>CENTRAL ACADEMIC ADMINISTRATION</span>
+                <span>HOD DEPARTMENT DESK • COMPUTER SCIENCE & ENGINEERING</span>
               </span>
-              <span className="text-xs text-slate-300">Office of the Dean & Academic Controller</span>
+              <span className="text-xs text-slate-300">Year-Wise & Division-Wise (A, B, C) Auditing</span>
             </div>
             <h1 className="text-2xl font-bold text-white tracking-tight">
               Welcome, {adminName} 🏛️
             </h1>
             <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-              Assign new faculty members, circulate official institutional details to faculty & student portals, and monitor real-time daily class attendance reports from each department.
+              Inspect separate year-wise (2nd Year, 3rd Year, Final Year) and division-wise (Div A, Div B, Div C) student attendance reports, onboard new faculty members, and circulate official HOD details directly to faculty & student portals.
             </p>
           </div>
 
@@ -270,7 +443,7 @@ export default function AdminDashboard({ user, setActiveTab, onOpenPublishNotice
             <span className="text-2xl font-extrabold text-slate-900 mt-1 block">{faculties.length}</span>
             <span className="text-[10px] text-emerald-600 font-bold flex items-center space-x-1 mt-1">
               <CheckCircle2 className="w-3 h-3" />
-              <span>Active in Central ERP</span>
+              <span>Active HOD Roster</span>
             </span>
           </div>
           <div className="p-3 bg-purple-50 text-purple-600 rounded-2xl">
@@ -280,26 +453,26 @@ export default function AdminDashboard({ user, setActiveTab, onOpenPublishNotice
 
         <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-2xs flex items-center justify-between">
           <div>
-            <span className="text-xs text-slate-500 font-medium block">Classes Conducted Today</span>
-            <span className="text-2xl font-extrabold text-slate-900 mt-1 block">{summaryStats.totalClassesConducted || dailyClassUpdates.length}</span>
+            <span className="text-xs text-slate-500 font-medium block">Academic Batches Tracked</span>
+            <span className="text-2xl font-extrabold text-slate-900 mt-1 block">9 Divisions</span>
             <span className="text-[10px] text-blue-600 font-bold flex items-center space-x-1 mt-1">
-              <Clock className="w-3 h-3" />
-              <span>Real-Time Faculty Sync</span>
+              <Layers className="w-3 h-3" />
+              <span>Div A, B, C across 3 Years</span>
             </span>
           </div>
           <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl">
-            <BookOpen className="w-6 h-6" />
+            <GraduationCap className="w-6 h-6" />
           </div>
         </div>
 
         <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-2xs flex items-center justify-between">
           <div>
-            <span className="text-xs text-slate-500 font-medium block">Overall Present Count Today</span>
+            <span className="text-xs text-slate-500 font-medium block">Overall Department Present Count</span>
             <span className="text-2xl font-extrabold text-emerald-600 mt-1 block">
-              {summaryStats.totalPresentSum} <span className="text-xs text-slate-400 font-semibold">/ {summaryStats.totalEnrolledSum} Present</span>
+              423 <span className="text-xs text-slate-400 font-semibold">/ 503 Enrolled</span>
             </span>
             <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded font-bold mt-1 inline-block">
-              {summaryStats.overallCampusAttendance}% Attendance Rate
+              84.1% Campus Average Today
             </span>
           </div>
           <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl">
@@ -309,12 +482,12 @@ export default function AdminDashboard({ user, setActiveTab, onOpenPublishNotice
 
         <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-2xs flex items-center justify-between">
           <div>
-            <span className="text-xs text-slate-500 font-medium block">Shortage Alerts Flagged</span>
+            <span className="text-xs text-slate-500 font-medium block">Department Shortage Flags</span>
             <span className="text-2xl font-extrabold text-amber-600 mt-1 block">
-              {dailyClassUpdates.filter(u => u.percentage < 75).length} Classes
+              {departmentReports.reduce((acc, r) => acc + r.shortageRiskCount, 0)} Students
             </span>
             <span className="text-[10px] text-amber-700 bg-amber-50 px-2 py-0.5 rounded font-bold mt-1 inline-block">
-              Under 75% Threshold
+              Attendance &lt; 75% Risk
             </span>
           </div>
           <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl">
@@ -324,7 +497,157 @@ export default function AdminDashboard({ user, setActiveTab, onOpenPublishNotice
 
       </div>
 
-      {/* SECTION 1: DAILY UPDATES FROM EACH FACULTY & TOTAL PRESENT COUNT MATRIX */}
+      {/* SECTION 1: HOD YEAR-WISE & DIVISION-WISE (DIV A, B, C) STUDENT ATTENDANCE & PERFORMANCE REPORTS */}
+      <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-2xs space-y-5">
+        
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+          <div>
+            <h2 className="text-base font-bold text-slate-900 flex items-center space-x-2">
+              <GraduationCap className="w-5 h-5 text-purple-600" />
+              <span>HOD Department Reports: Year-Wise & Division-Wise (A, B, C)</span>
+            </h2>
+            <p className="text-xs text-slate-500">Separated reports for 2nd Year, 3rd Year, and Final Year students split by Division A, B, and C</p>
+          </div>
+
+          {/* Year & Division Filters */}
+          <div className="flex flex-wrap items-center gap-2">
+            
+            {/* Year Selector Tabs */}
+            <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl">
+              {['All', '2nd Year', '3rd Year', 'Final Year'].map((yr) => (
+                <button
+                  key={yr}
+                  onClick={() => setSelectedYearFilter(yr)}
+                  className={`px-3 py-1.5 text-xs font-bold rounded-lg transition ${
+                    selectedYearFilter === yr 
+                      ? 'bg-purple-600 text-white shadow-xs' 
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  {yr}
+                </button>
+              ))}
+            </div>
+
+            {/* Division Selector Pills */}
+            <div className="flex items-center space-x-1 bg-purple-50 border border-purple-200 p-1 rounded-xl">
+              {['All', 'Division A', 'Division B', 'Division C'].map((div) => (
+                <button
+                  key={div}
+                  onClick={() => setSelectedDivisionFilter(div)}
+                  className={`px-2.5 py-1 text-xs font-bold rounded-lg transition ${
+                    selectedDivisionFilter === div 
+                      ? 'bg-white text-purple-900 shadow-xs border border-purple-300' 
+                      : 'text-purple-700 hover:text-purple-950'
+                  }`}
+                >
+                  {div}
+                </button>
+              ))}
+            </div>
+
+          </div>
+        </div>
+
+        {/* Division Reports Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {filteredReports.map((rep) => {
+            const isCritical = rep.attendancePercentage < 75;
+
+            return (
+              <div key={rep.id} className="bg-slate-50/70 hover:bg-white rounded-2xl p-5 border border-slate-200 hover:border-purple-300 transition space-y-4 shadow-2xs flex flex-col justify-between group">
+                
+                <div>
+                  {/* Top Badges */}
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-purple-700 bg-purple-100 px-2.5 py-0.5 rounded-md border border-purple-200">
+                      {rep.year} • {rep.division}
+                    </span>
+                    <span className="text-[10px] font-bold text-slate-500 bg-slate-200/80 px-2 py-0.5 rounded-md">
+                      {rep.semester}
+                    </span>
+                  </div>
+
+                  <h3 className="text-sm font-bold text-slate-900 group-hover:text-purple-700 transition">
+                    {rep.batchName}
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5 font-medium">
+                    Faculty In-Charge: <strong className="text-slate-800">{rep.facultyInCharge}</strong>
+                  </p>
+
+                  {/* Attendance Stats Counter Box */}
+                  <div className="bg-white rounded-xl p-3 border border-slate-200/80 mt-3 space-y-2">
+                    <div className="flex items-center justify-between text-xs font-bold">
+                      <span className="text-slate-600">Total Enrolled: {rep.totalEnrolled}</span>
+                      <span className="text-emerald-600">{rep.totalPresent} Present Today</span>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                      <div 
+                        className={`h-full transition-all duration-300 ${
+                          rep.attendancePercentage >= 85 ? 'bg-emerald-500' :
+                          rep.attendancePercentage >= 75 ? 'bg-blue-500' : 'bg-amber-500'
+                        }`}
+                        style={{ width: `${rep.attendancePercentage}%` }}
+                      ></div>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] font-semibold pt-1">
+                      <span className="text-slate-400">{rep.totalAbsent} Absent</span>
+                      <span className={`px-2 py-0.5 rounded font-extrabold ${
+                        isCritical ? 'bg-amber-100 text-amber-900 border border-amber-200' : 'bg-emerald-50 text-emerald-800'
+                      }`}>
+                        {rep.attendancePercentage}% Attendance Rate
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Division Subject Reports List */}
+                  <div className="mt-3 space-y-1.5">
+                    <span className="text-[11px] font-bold text-slate-700 block">Class Subjects & Present Count:</span>
+                    {rep.subjects.map((sub, idx) => (
+                      <div key={idx} className="bg-white p-2 rounded-lg border border-slate-200/60 flex items-center justify-between text-[11px]">
+                        <div>
+                          <span className="font-bold text-slate-900 block">{sub.code}: {sub.name}</span>
+                          <span className="text-[10px] text-slate-400">{sub.faculty}</span>
+                        </div>
+                        <div className="text-right">
+                          <span className="font-extrabold text-emerald-700 block">{sub.present} / {sub.total}</span>
+                          <span className="text-[9px] text-slate-500 font-semibold">{sub.percentage}%</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                </div>
+
+                {/* Card Footer Warning Status */}
+                <div className="pt-3 border-t border-slate-200/80 flex items-center justify-between text-[11px]">
+                  <span className="text-slate-500 flex items-center space-x-1">
+                    <AlertTriangle className={`w-3.5 h-3.5 ${rep.shortageRiskCount > 3 ? 'text-amber-500' : 'text-slate-400'}`} />
+                    <span><strong>{rep.shortageRiskCount}</strong> Shortage Risks (&lt;75%)</span>
+                  </span>
+                  <button 
+                    onClick={() => {
+                      setToastMessage(`HOD Notice circulated for ${rep.batchName}`);
+                      setTimeout(() => setToastMessage(null), 4000);
+                    }}
+                    className="text-purple-700 hover:text-purple-900 font-bold flex items-center space-x-1"
+                  >
+                    <span>Issue Circular</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+              </div>
+            );
+          })}
+        </div>
+
+      </div>
+
+      {/* SECTION 2: DAILY UPDATES FROM EACH FACULTY & TOTAL PRESENT COUNT MATRIX */}
       <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-2xs space-y-4">
         
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
@@ -333,8 +656,8 @@ export default function AdminDashboard({ user, setActiveTab, onOpenPublishNotice
               <UserCheck className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-900">Daily Updates & Class Attendance Report</h2>
-              <p className="text-xs text-slate-500">Live feed of total students present & absent reported by each faculty member today</p>
+              <h2 className="text-base font-bold text-slate-900">Faculty Daily Class Attendance Reports</h2>
+              <p className="text-xs text-slate-500">Live updates of total students present & absent submitted by each faculty member today</p>
             </div>
           </div>
 
@@ -436,7 +759,7 @@ export default function AdminDashboard({ user, setActiveTab, onOpenPublishNotice
 
       </div>
 
-      {/* SECTION 2: ASSIGNED FACULTIES DIRECTORY & ONBOARDING SYSTEM */}
+      {/* SECTION 3: ASSIGNED FACULTIES DIRECTORY & ONBOARDING SYSTEM */}
       <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-2xs space-y-4">
         
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">

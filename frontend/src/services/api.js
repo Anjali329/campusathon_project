@@ -124,6 +124,13 @@ export const api = {
     return res.json();
   },
 
+  getDepartmentReports: async () => {
+    const res = await fetch(`${API_BASE_URL}/admin/department-reports`, {
+      headers: getHeaders(),
+    });
+    return res.json();
+  },
+
   // Priority Actions
   getPriorityActions: async () => {
     const res = await fetch(`${API_BASE_URL}/priority/actions`, {

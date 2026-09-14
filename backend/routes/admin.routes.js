@@ -164,6 +164,162 @@ router.post('/assign-faculty', authenticateJWT, requireRole(['admin']), (req, re
   });
 });
 
+// Database Store: Year-wise & Division-wise HOD Department Reports
+let departmentReportsData = [
+  // 2nd Year
+  {
+    id: "rep-2a",
+    year: "2nd Year",
+    semester: "4th Semester",
+    division: "Division A",
+    batchName: "B.Tech CSE 2nd Year (Sec A)",
+    totalEnrolled: 64,
+    totalPresent: 55,
+    totalAbsent: 9,
+    attendancePercentage: 85.9,
+    shortageRiskCount: 2,
+    facultyInCharge: "Dr. A. K. Verma",
+    subjects: [
+      { code: "CS401", name: "Discrete Mathematics", faculty: "Dr. A. K. Verma", present: 55, total: 64, percentage: 85.9 },
+      { code: "CS403", name: "OOP Java", faculty: "Prof. S. K. Roy", present: 52, total: 64, percentage: 81.3 }
+    ]
+  },
+  {
+    id: "rep-2b",
+    year: "2nd Year",
+    semester: "4th Semester",
+    division: "Division B",
+    batchName: "B.Tech CSE 2nd Year (Sec B)",
+    totalEnrolled: 62,
+    totalPresent: 49,
+    totalAbsent: 13,
+    attendancePercentage: 79.0,
+    shortageRiskCount: 5,
+    facultyInCharge: "Prof. Neha Gupta",
+    subjects: [
+      { code: "CS402", name: "Microprocessors & Interfacing", faculty: "Prof. Neha Gupta", present: 49, total: 62, percentage: 79.0 }
+    ]
+  },
+  {
+    id: "rep-2c",
+    year: "2nd Year",
+    semester: "4th Semester",
+    division: "Division C",
+    batchName: "B.Tech CSE 2nd Year (Sec C)",
+    totalEnrolled: 60,
+    totalPresent: 48,
+    totalAbsent: 12,
+    attendancePercentage: 80.0,
+    shortageRiskCount: 3,
+    facultyInCharge: "Prof. S. K. Roy",
+    subjects: [
+      { code: "CS404L", name: "Java OOP Lab", faculty: "Prof. S. K. Roy", present: 48, total: 60, percentage: 80.0 }
+    ]
+  },
+
+  // 3rd Year
+  {
+    id: "rep-3a",
+    year: "3rd Year",
+    semester: "6th Semester",
+    division: "Division A",
+    batchName: "B.Tech CSE 3rd Year (Sec A)",
+    totalEnrolled: 60,
+    totalPresent: 47,
+    totalAbsent: 13,
+    attendancePercentage: 78.3,
+    shortageRiskCount: 4,
+    facultyInCharge: "Prof. Ananya Sen",
+    subjects: [
+      { code: "CS601", name: "Operating Systems", faculty: "Prof. Ananya Sen", present: 47, total: 60, percentage: 78.3 },
+      { code: "CS604", name: "Machine Learning", faculty: "Prof. Ananya Sen", present: 50, total: 58, percentage: 86.2 }
+    ]
+  },
+  {
+    id: "rep-3b",
+    year: "3rd Year",
+    semester: "6th Semester",
+    division: "Division B",
+    batchName: "B.Tech CSE 3rd Year (Sec B)",
+    totalEnrolled: 58,
+    totalPresent: 42,
+    totalAbsent: 16,
+    attendancePercentage: 72.4,
+    shortageRiskCount: 6,
+    facultyInCharge: "Dr. Vikram Sharma",
+    subjects: [
+      { code: "CS604L", name: "ML Lab (Sec B)", faculty: "Dr. Vikram Sharma", present: 22, total: 30, percentage: 73.3 },
+      { code: "CS602", name: "Computer Networks", faculty: "Dr. R. P. Gupta", present: 44, total: 55, percentage: 80.0 }
+    ]
+  },
+  {
+    id: "rep-3c",
+    year: "3rd Year",
+    semester: "6th Semester",
+    division: "Division C",
+    batchName: "B.Tech CSE 3rd Year (Sec C)",
+    totalEnrolled: 55,
+    totalPresent: 46,
+    totalAbsent: 9,
+    attendancePercentage: 83.6,
+    shortageRiskCount: 2,
+    facultyInCharge: "Dr. Sunita Rao",
+    subjects: [
+      { code: "CS603", name: "Design & Analysis of Algorithms", faculty: "Dr. Sunita Rao", present: 46, total: 55, percentage: 83.6 }
+    ]
+  },
+
+  // Final Year
+  {
+    id: "rep-4a",
+    year: "Final Year",
+    semester: "8th Semester",
+    division: "Division A",
+    batchName: "B.Tech CSE Final Year (Sec A)",
+    totalEnrolled: 50,
+    totalPresent: 45,
+    totalAbsent: 5,
+    attendancePercentage: 90.0,
+    shortageRiskCount: 1,
+    facultyInCharge: "Dr. R. P. Gupta (HOD)",
+    subjects: [
+      { code: "CS801", name: "Cloud Infrastructure & DevOps", faculty: "Dr. R. P. Gupta", present: 45, total: 50, percentage: 90.0 }
+    ]
+  },
+  {
+    id: "rep-4b",
+    year: "Final Year",
+    semester: "8th Semester",
+    division: "Division B",
+    batchName: "B.Tech CSE Final Year (Sec B)",
+    totalEnrolled: 48,
+    totalPresent: 43,
+    totalAbsent: 5,
+    attendancePercentage: 89.5,
+    shortageRiskCount: 1,
+    facultyInCharge: "Prof. Ananya Sen",
+    subjects: [
+      { code: "CS802", name: "Deep Learning & NLP", faculty: "Prof. Ananya Sen", present: 43, total: 48, percentage: 89.5 }
+    ]
+  },
+  {
+    id: "rep-4c",
+    year: "Final Year",
+    semester: "8th Semester",
+    division: "Division C",
+    batchName: "B.Tech CSE Final Year (Sec C)",
+    totalEnrolled: 46,
+    totalPresent: 40,
+    totalAbsent: 6,
+    attendancePercentage: 86.9,
+    shortageRiskCount: 2,
+    facultyInCharge: "Dr. Vikram Sharma",
+    subjects: [
+      { code: "CS803", name: "Cyber Security & Forensic Audit", faculty: "Dr. Vikram Sharma", present: 40, total: 46, percentage: 86.9 }
+    ]
+  }
+];
+
 // GET /api/admin/daily-class-updates - Get daily attendance updates & present counts from each faculty class
 router.get('/daily-class-updates', authenticateJWT, (req, res) => {
   const totalEnrolledSum = dailyClassUpdatesData.reduce((acc, curr) => acc + curr.totalEnrolled, 0);
@@ -180,6 +336,15 @@ router.get('/daily-class-updates', authenticateJWT, (req, res) => {
       overallCampusAttendance: overallAvg,
     },
     updates: dailyClassUpdatesData,
+  });
+});
+
+// GET /api/admin/department-reports - Get HOD year-wise and division-wise (Div A, B, C) student reports
+router.get('/department-reports', authenticateJWT, (req, res) => {
+  res.json({
+    success: true,
+    count: departmentReportsData.length,
+    reports: departmentReportsData,
   });
 });
 
