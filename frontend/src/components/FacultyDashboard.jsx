@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { api } from '../services/api';
 
-export default function FacultyDashboard({ setActiveTab, onOpenGradeModal, onOpenPublishNoticeModal }) {
+export default function FacultyDashboard({ user, setActiveTab, onOpenGradeModal, onOpenPublishNoticeModal }) {
   const [schedule, setSchedule] = useState([
     { id: "lec-1", time: "10:00 AM - 11:00 AM", subjectCode: "CS601", subjectName: "Operating Systems", room: "Lecture Hall LT-3", batch: "B.Tech CSE - 6th Sem (Sec A)", totalStudents: 60, status: "Completed", markedAttendance: true },
     { id: "lec-2", time: "11:15 AM - 12:15 PM", subjectCode: "CS604", subjectName: "Machine Learning", room: "Lecture Hall LT-2", batch: "B.Tech CSE - 6th Sem (Sec A)", totalStudents: 58, status: "Upcoming Today", markedAttendance: false },
@@ -36,6 +36,32 @@ export default function FacultyDashboard({ setActiveTab, onOpenGradeModal, onOpe
   ]);
 
   const [toastMessage, setToastMessage] = useState(null);
+
+  // Modals inside FacultyDashboard
+  const [isCreateAssignmentOpen, setIsCreateAssignmentOpen] = useState(false);
+  const [selectedSubForGrade, setSelectedSubForGrade] = useState(null);
+  const [isAddLectureOpen, setIsAddLectureOpen] = useState(false);
+
+  // New Assignment form state
+  const [newTitle, setNewTitle] = useState('');
+  const [newSubject, setNewSubject] = useState('CS601 Operating Systems');
+  const [newDueDate, setNewDueDate] = useState('');
+  const [newWeightage, setNewWeightage] = useState('15%');
+  const [newMaxMarks, setNewMaxMarks] = useState('50');
+  const [newInstructions, setNewInstructions] = useState('');
+
+  // Grade Modal form state
+  const [marksInput, setMarksInput] = useState('48');
+  const [gradeInput, setGradeInput] = useState('A+');
+  const [feedbackInput, setFeedbackInput] = useState('Well executed logic and clean code documentation.');
+
+  // New Lecture form state
+  const [newLecCode, setNewLecCode] = useState('CS602');
+  const [newLecName, setNewLecName] = useState('Computer Networks');
+  const [newLecTime, setNewLecTime] = useState('02:00 PM - 03:00 PM');
+  const [newLecRoom, setNewLecRoom] = useState('Lecture Hall LT-4');
+  const [newLecBatch, setNewLecBatch] = useState('B.Tech CSE - 6th Sem (Sec A)');
+  const [newLecStudents, setNewLecStudents] = useState('60');
 
   useEffect(() => {
     // Fetch live backend data if available
@@ -62,6 +88,66 @@ export default function FacultyDashboard({ setActiveTab, onOpenGradeModal, onOpe
   const handleMarkAttendanceClick = (lec) => {
     setActiveTab('attendance');
   };
+
+  const handleCreateAssignmentSubmit = (e) => {
+    e.preventDefault();
+    const created = {
+      id: `asg-${Date.now()}`,
+      title: newTitle || 'New Practical Assignment',
+      subject: newSubject,
+      faculty: user?.name || 'Prof. Ananya Sen',
+      dueDate: newDueDate || 'Next Week',
+      maxMarks: parseInt(newMaxMarks) || 50,
+      weightage: newWeightage,
+      status: 'Pending',
+      instructions: newInstructions || 'Complete according to guidelines.',
+    };
+
+    api.publishExamSlot(created).catch(() => {});
+    setIsCreateAssignmentOpen(false);
+    setToastMessage(`Assignment '${created.title}' published successfully to student portal!`);
+    setTimeout(() => setToastMessage(null), 4000);
+  };
+
+  const handleGradeSubmit = (e) => {
+    e.preventDefault();
+    if (!selectedSubForGrade) return;
+
+    api.gradeSubmission({
+      submissionId: selectedSubForGrade.id,
+      score: marksInput,
+      grade: gradeInput,
+      feedback: feedbackInput
+    }).catch(() => {});
+
+    setEvaluations(evaluations.filter(ev => ev.id !== selectedSubForGrade.id));
+    setSelectedSubForGrade(null);
+    setToastMessage(`Evaluation verified: Marks (${marksInput}/${selectedSubForGrade.maxMarks}) & Grade (${gradeInput}) saved!`);
+    setTimeout(() => setToastMessage(null), 4000);
+  };
+
+  const handleAddLectureSubmit = (e) => {
+    e.preventDefault();
+    const newLec = {
+      id: `lec-${Date.now()}`,
+      time: newLecTime,
+      subjectCode: newLecCode,
+      subjectName: newLecName,
+      room: newLecRoom,
+      batch: newLecBatch,
+      totalStudents: parseInt(newLecStudents) || 60,
+      status: "Upcoming Today",
+      markedAttendance: false
+    };
+    setSchedule([...schedule, newLec]);
+    setIsAddLectureOpen(false);
+    setToastMessage(`New lecture slot for ${newLecName} added to today's schedule!`);
+    setTimeout(() => setToastMessage(null), 4000);
+  };
+
+  const completedCount = schedule.filter(s => s.markedAttendance).length;
+  const totalCount = schedule.length;
+  const facultyName = user?.name || "Prof. Ananya Sen";
 
   return (
     <div className="space-y-6">
@@ -90,16 +176,16 @@ export default function FacultyDashboard({ setActiveTab, onOpenGradeModal, onOpe
               <span className="text-xs text-slate-300">Department of Computer Science</span>
             </div>
             <h1 className="text-2xl font-bold text-white tracking-tight">
-              Welcome Back, Prof. Ananya Sen 👋
+              Welcome Back, {facultyName} 👋
             </h1>
             <p className="text-xs text-slate-300 mt-1 max-w-xl">
-              Manage today's lectures, class attendance logs, defaulter lists, assignment grading queues, and exam timetables.
+              Manage today's lectures schedule, class attendance logs, defaulter lists, assignment grading queues, and exam timetables.
             </p>
           </div>
 
           <div className="flex items-center space-x-2 shrink-0">
             <button 
-              onClick={() => setActiveTab('assignments')}
+              onClick={() => setIsCreateAssignmentOpen(true)}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition shadow-sm flex items-center space-x-1.5"
             >
               <PlusCircle className="w-4 h-4" />
@@ -118,19 +204,35 @@ export default function FacultyDashboard({ setActiveTab, onOpenGradeModal, onOpe
 
       {/* SECTION 1: TODAY'S ASSIGNED LECTURES SCHEDULE */}
       <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-2xs">
-        <div className="flex items-center justify-between mb-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
           <div className="flex items-center space-x-2">
             <div className="p-2 bg-blue-50 text-blue-600 rounded-xl">
               <Calendar className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-900">Today's Assigned Lectures & Schedule</h2>
-              <p className="text-xs text-slate-500">Your assigned teaching classes for today</p>
+              <div className="flex items-center space-x-2">
+                <h2 className="text-base font-bold text-slate-900">Today's Assigned Lectures & Schedule</h2>
+                <span className="text-[10px] font-extrabold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full border border-blue-200">
+                  {totalCount} Lectures Today
+                </span>
+              </div>
+              <p className="text-xs text-slate-500 mt-0.5">
+                {completedCount} Completed • {totalCount - completedCount} Upcoming Pending
+              </p>
             </div>
           </div>
-          <span className="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1 rounded-full">
-            {new Date().toLocaleDateString('en-GB', { weekday: 'short', day: '2-digit', month: 'short' })}
-          </span>
+          <div className="flex items-center space-x-2">
+            <button 
+              onClick={() => setIsAddLectureOpen(true)}
+              className="text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-xl border border-blue-200 transition flex items-center space-x-1"
+            >
+              <PlusCircle className="w-3.5 h-3.5" />
+              <span>Add Lecture Slot</span>
+            </button>
+            <span className="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-xl">
+              {new Date().toLocaleDateString('en-GB', { weekday: 'short', day: '2-digit', month: 'short' })}
+            </span>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -287,8 +389,8 @@ export default function FacultyDashboard({ setActiveTab, onOpenGradeModal, onOpe
                   <div className="flex flex-col items-end space-y-1.5">
                     <span className="text-[10px] text-slate-400">{sub.submittedAt}</span>
                     <button 
-                      onClick={() => setActiveTab('assignments')}
-                      className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition flex items-center space-x-1"
+                      onClick={() => setSelectedSubForGrade(sub)}
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition flex items-center space-x-1 shadow-2xs"
                     >
                       <Award className="w-3.5 h-3.5" />
                       <span>Verify & Grade</span>
@@ -310,7 +412,7 @@ export default function FacultyDashboard({ setActiveTab, onOpenGradeModal, onOpe
       {/* QUICK FACULTY ACTION TILES */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div 
-          onClick={() => setActiveTab('assignments')}
+          onClick={() => setIsCreateAssignmentOpen(true)}
           className="bg-white p-4 rounded-2xl border border-slate-200 hover:border-blue-400 hover:shadow-md transition cursor-pointer flex items-center space-x-3"
         >
           <div className="p-3 bg-blue-100 text-blue-600 rounded-xl">
@@ -361,6 +463,290 @@ export default function FacultyDashboard({ setActiveTab, onOpenGradeModal, onOpe
           </div>
         </div>
       </div>
+
+      {/* MODAL 1: CREATE & PUBLISH ASSIGNMENT */}
+      {isCreateAssignmentOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl animate-fadeIn border border-slate-100">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="font-bold text-slate-900 text-base flex items-center space-x-2">
+                <PlusCircle className="w-5 h-5 text-blue-600" />
+                <span>Create & Publish New Assignment</span>
+              </h3>
+              <button onClick={() => setIsCreateAssignmentOpen(false)} className="text-slate-400 hover:text-slate-600">✕</button>
+            </div>
+
+            <form onSubmit={handleCreateAssignmentSubmit} className="space-y-3.5 text-xs">
+              <div>
+                <label className="block text-slate-700 font-bold mb-1">Assignment Title</label>
+                <input 
+                  type="text" 
+                  required
+                  placeholder="e.g. OS Page Replacement Simulator" 
+                  value={newTitle} 
+                  onChange={(e) => setNewTitle(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Subject</label>
+                  <select 
+                    value={newSubject}
+                    onChange={(e) => setNewSubject(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  >
+                    <option>CS601 Operating Systems</option>
+                    <option>CS604 Machine Learning</option>
+                    <option>CS604L Machine Learning Lab</option>
+                    <option>CS602 Computer Networks</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Submission Due Date</label>
+                  <input 
+                    type="text" 
+                    placeholder="e.g. 18 Sep 2026, 05:00 PM" 
+                    value={newDueDate} 
+                    onChange={(e) => setNewDueDate(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Weightage (%)</label>
+                  <input 
+                    type="text" 
+                    placeholder="15%" 
+                    value={newWeightage} 
+                    onChange={(e) => setNewWeightage(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Max Evaluation Marks</label>
+                  <input 
+                    type="number" 
+                    placeholder="50" 
+                    value={newMaxMarks} 
+                    onChange={(e) => setNewMaxMarks(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-700 font-bold mb-1">Instructions & Requirements</label>
+                <textarea 
+                  rows={3}
+                  placeholder="Enter problem requirements..." 
+                  value={newInstructions} 
+                  onChange={(e) => setNewInstructions(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"
+                />
+              </div>
+
+              <div className="pt-2 flex justify-end space-x-2">
+                <button 
+                  type="button" 
+                  onClick={() => setIsCreateAssignmentOpen(false)}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-xs"
+                >
+                  Publish Assignment
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 2: VERIFY & GRADE SUBMISSION */}
+      {selectedSubForGrade && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl animate-fadeIn border border-slate-100">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="font-bold text-slate-900 text-base flex items-center space-x-2">
+                <Award className="w-5 h-5 text-emerald-600" />
+                <span>Verify & Allot Marks</span>
+              </h3>
+              <button onClick={() => setSelectedSubForGrade(null)} className="text-slate-400 hover:text-slate-600">✕</button>
+            </div>
+
+            <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-xs space-y-1">
+              <p className="font-bold text-slate-900">{selectedSubForGrade.assignmentTitle || selectedSubForGrade.title}</p>
+              <p className="text-slate-600">Subject: <strong>{selectedSubForGrade.subject}</strong></p>
+              <p className="text-slate-600">Student: <strong>{selectedSubForGrade.studentName}</strong> ({selectedSubForGrade.studentRoll})</p>
+              <p className="text-slate-600">Submitted File: <span className="font-mono text-blue-700">{selectedSubForGrade.submittedFile || 'Solution.pdf'}</span></p>
+            </div>
+
+            <form onSubmit={handleGradeSubmit} className="space-y-3.5 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Enter Marks (Out of {selectedSubForGrade.maxMarks || 50})</label>
+                  <input 
+                    type="number" 
+                    max={selectedSubForGrade.maxMarks || 50}
+                    required
+                    value={marksInput} 
+                    onChange={(e) => setMarksInput(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Assign Letter Grade</label>
+                  <select 
+                    value={gradeInput}
+                    onChange={(e) => setGradeInput(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none font-bold"
+                  >
+                    <option>O (Outstanding)</option>
+                    <option>A+ (Excellent)</option>
+                    <option>A (Very Good)</option>
+                    <option>B+ (Good)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-700 font-bold mb-1">Faculty Evaluation Remarks</label>
+                <textarea 
+                  rows={3}
+                  value={feedbackInput} 
+                  onChange={(e) => setFeedbackInput(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none resize-none"
+                />
+              </div>
+
+              <div className="pt-2 flex justify-end space-x-2">
+                <button 
+                  type="button" 
+                  onClick={() => setSelectedSubForGrade(null)}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-xs"
+                >
+                  Save & Verify Grade
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 3: ADD NEW LECTURE SLOT */}
+      {isAddLectureOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-fadeIn border border-slate-100">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="font-bold text-slate-900 text-base flex items-center space-x-2">
+                <Calendar className="w-5 h-5 text-blue-600" />
+                <span>Add Lecture Slot To Today's Schedule</span>
+              </h3>
+              <button onClick={() => setIsAddLectureOpen(false)} className="text-slate-400 hover:text-slate-600">✕</button>
+            </div>
+
+            <form onSubmit={handleAddLectureSubmit} className="space-y-3.5 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Subject Code</label>
+                  <input 
+                    type="text" 
+                    required
+                    value={newLecCode} 
+                    onChange={(e) => setNewLecCode(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Time Slot</label>
+                  <input 
+                    type="text" 
+                    required
+                    value={newLecTime} 
+                    onChange={(e) => setNewLecTime(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-700 font-bold mb-1">Subject Name</label>
+                <input 
+                  type="text" 
+                  required
+                  value={newLecName} 
+                  onChange={(e) => setNewLecName(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Classroom / Lab</label>
+                  <input 
+                    type="text" 
+                    required
+                    value={newLecRoom} 
+                    onChange={(e) => setNewLecRoom(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Enrolled Students</label>
+                  <input 
+                    type="number" 
+                    required
+                    value={newLecStudents} 
+                    onChange={(e) => setNewLecStudents(e.target.value)}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-700 font-bold mb-1">Target Batch / Semester</label>
+                <input 
+                  type="text" 
+                  required
+                  value={newLecBatch} 
+                  onChange={(e) => setNewLecBatch(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+              </div>
+
+              <div className="pt-2 flex justify-end space-x-2">
+                <button 
+                  type="button" 
+                  onClick={() => setIsAddLectureOpen(false)}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-xs"
+                >
+                  Add Lecture Slot
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
     </div>
   );

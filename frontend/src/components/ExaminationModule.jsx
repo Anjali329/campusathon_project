@@ -60,6 +60,7 @@ export default function ExaminationModule({ activeRole, user }) {
   ]);
 
   const [showAddExamModal, setShowAddExamModal] = useState(false);
+  const [editingExamId, setEditingExamId] = useState(null);
   const [newSubject, setNewSubject] = useState('CS603: Design & Analysis of Algorithms');
   const [newType, setNewType] = useState('Mid-Term Written Exam');
   const [newDate, setNewDate] = useState('2026-09-22');
@@ -77,26 +78,72 @@ export default function ExaminationModule({ activeRole, user }) {
     }).catch(() => {});
   }, []);
 
+  const handleOpenAddModal = () => {
+    setEditingExamId(null);
+    setNewSubject('CS603: Design & Analysis of Algorithms');
+    setNewType('Mid-Term Written Exam');
+    setNewDate('2026-09-22');
+    setNewTime('10:00 AM - 12:00 PM');
+    setNewVenue('Lecture Hall LT-1');
+    setNewSeat('LT1-A-15');
+    setShowAddExamModal(true);
+  };
+
+  const handleEditClick = (ex) => {
+    setEditingExamId(ex.id);
+    setNewSubject(`${ex.code}: ${ex.subject}`);
+    setNewType(ex.type);
+    setNewDate(ex.date);
+    setNewTime(ex.time);
+    setNewVenue(ex.venue);
+    setNewSeat(ex.seatNo);
+    setShowAddExamModal(true);
+  };
+
+  const handleDeleteExam = (id) => {
+    setExamTimetable(prev => prev.filter(ex => ex.id !== id));
+    setToastMessage("Exam timetable slot deleted!");
+    setTimeout(() => setToastMessage(null), 4000);
+  };
+
   const handleAddExam = (e) => {
     e.preventDefault();
-    const newEntry = {
-      id: `ex-${Date.now()}`,
-      code: newSubject.split(':')[0].trim(),
-      subject: (newSubject.split(':')[1] || newSubject).trim(),
-      type: newType,
-      date: newDate,
-      time: newTime,
-      venue: newVenue,
-      seatNo: newSeat,
-      updatedBy: "Prof. Ananya Sen (Faculty)",
-      updatedOn: "Just Now",
-    };
+    const facultyLabel = (user?.name ? `${user.name} (Faculty)` : "Prof. Ananya Sen (Faculty)");
+    
+    if (editingExamId) {
+      setExamTimetable(prev => prev.map(ex => ex.id === editingExamId ? {
+        ...ex,
+        code: newSubject.split(':')[0].trim(),
+        subject: (newSubject.split(':')[1] || newSubject).trim(),
+        type: newType,
+        date: newDate,
+        time: newTime,
+        venue: newVenue,
+        seatNo: newSeat,
+        updatedBy: facultyLabel,
+        updatedOn: "Just Now",
+      } : ex));
+      setToastMessage("Exam timetable slot updated!");
+    } else {
+      const newEntry = {
+        id: `ex-${Date.now()}`,
+        code: newSubject.split(':')[0].trim(),
+        subject: (newSubject.split(':')[1] || newSubject).trim(),
+        type: newType,
+        date: newDate,
+        time: newTime,
+        venue: newVenue,
+        seatNo: newSeat,
+        updatedBy: facultyLabel,
+        updatedOn: "Just Now",
+      };
+      api.publishExamSlot(newEntry).catch(() => {});
+      setExamTimetable(prev => [newEntry, ...prev]);
+      setToastMessage(`Exam timetable slot for '${newEntry.subject}' published!`);
+    }
 
-    api.publishExamSlot(newEntry).catch(() => {});
-
-    setExamTimetable(prev => [newEntry, ...prev]);
     setShowAddExamModal(false);
-    setToastMessage(`Exam timetable slot for '${newEntry.subject}' published successfully!`);
+    setEditingExamId(null);
     setTimeout(() => setToastMessage(null), 4000);
   };
 
@@ -196,11 +243,11 @@ export default function ExaminationModule({ activeRole, user }) {
 
             {activeRole === 'faculty' && (
               <button 
-                onClick={() => setShowAddExamModal(true)}
+                onClick={handleOpenAddModal}
                 className="flex items-center space-x-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-xs"
               >
                 <Plus className="w-4 h-4" />
-                <span>Upload / Edit Exam Timetable</span>
+                <span>Upload / Add Exam Timetable</span>
               </button>
             )}
           </div>
@@ -236,9 +283,28 @@ export default function ExaminationModule({ activeRole, user }) {
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
-                  <span>Updated by: <strong className="text-slate-600">{ex.updatedBy}</strong></span>
-                  <span>{ex.updatedOn}</span>
+                <div>
+                  {activeRole === 'faculty' && (
+                    <div className="mb-2 pt-2 border-t border-slate-100 flex items-center justify-end space-x-2 text-xs">
+                      <button 
+                        onClick={() => handleEditClick(ex)}
+                        className="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold rounded-lg border border-purple-200 transition text-[11px]"
+                      >
+                        Edit Slot
+                      </button>
+                      <button 
+                        onClick={() => handleDeleteExam(ex.id)}
+                        className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-700 font-bold rounded-lg border border-red-200 transition text-[11px]"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
+
+                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                    <span>Updated by: <strong className="text-slate-600">{ex.updatedBy}</strong></span>
+                    <span>{ex.updatedOn}</span>
+                  </div>
                 </div>
               </div>
             ))}
@@ -335,7 +401,7 @@ export default function ExaminationModule({ activeRole, user }) {
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="font-bold text-base text-slate-900 flex items-center space-x-2">
                 <Calendar className="w-5 h-5 text-purple-600" />
-                <span>Publish Exam Timetable Entry</span>
+                <span>{editingExamId ? 'Update Exam Timetable Entry' : 'Publish Exam Timetable Entry'}</span>
               </h3>
               <button onClick={() => setShowAddExamModal(false)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-5 h-5" />
@@ -426,7 +492,7 @@ export default function ExaminationModule({ activeRole, user }) {
                   type="submit"
                   className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-xs"
                 >
-                  Publish Schedule
+                  {editingExamId ? 'Update Schedule' : 'Publish Schedule'}
                 </button>
               </div>
             </form>
