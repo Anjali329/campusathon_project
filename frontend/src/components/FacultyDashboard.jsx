@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import { 
   Calendar, 
   Clock, 
@@ -13,7 +12,9 @@ import {
   UserCheck, 
   Bell, 
   ChevronRight,
-  Sparkles
+  Sparkles,
+  Zap,
+  BookOpen
 } from 'lucide-react';
 import { api } from '../services/api';
 
